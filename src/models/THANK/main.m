@@ -5,8 +5,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all
 
-addpath('gensys')
-addpath('csminwel')
+addpath('../../util/gensys')
+addpath('../../util/csminwel')
+addpath('../../util/')
 
 % loading the relevant dataset
 load DataTHANK;

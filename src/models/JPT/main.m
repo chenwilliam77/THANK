@@ -7,6 +7,10 @@
 
 clear all
 
+addpath('../../util/gensys')
+addpath('../../util/csminwel')
+addpath('../../util/')
+
 % loading the relevant dataset
 load DataJPT;
 y=DataJPT;
