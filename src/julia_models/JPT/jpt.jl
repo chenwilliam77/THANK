@@ -122,8 +122,9 @@ function init_model_indices!(m::JPT)
     endogenous_states = [:y_t, :k_t, :L_t, :Rk_t, :w_t, :π_t, :s_t, :λ_t,       # sticky prices
                          :c_t, :R_t, :u_t, :ϕ_t, :i_t, :kbar_t, :wgap_t,
                          :gdp_t, :z_t, :g_t, :μ_t, :λ_p_t, :λ_w_t,
-                         :b_t, :mp_t, :Eπ_t, :Eλ_t, :Eϕ_t,
-                         :Rk_t, :Ei_t, :Ew_t, :gdp_t1, :c_t1, :i_t1, :w_t1,     # CHECK BACK IF ANY CAN BE AUGMENTED VARIABLES
+                         :b_t, :mp_t, :Eπ_t, :Ec_t, :Eλ_t, :Eϕ_t, :ERk_t, :Ei_t
+                         :Ew_t, :gdp_t1, :c_t1, :i_t1, :w_t1, :λ_p_t1, :λ_w_t1,
+                                                                                # CHECK BACK IF ANY CAN BE AUGMENTED VARIABLES
                          :y_f_t, :k_f_t, :L_f_t, :Rk_f_t, :w_f_t, :s_f_t,       # flexible prices
                          :λ_f_t, :c_f_t, :R_f_t, :u_f_t, :ϕ_f_t,
                          :i_f_t, :kbar_f_t, :wgap_f_t, :Ec_f_t, :Eλ_f_t,
@@ -140,8 +141,10 @@ function init_model_indices!(m::JPT)
     equilibrium_conditions = [:eq_y, :eq_k, :eq_L, :eq_Rk, :eq_w, :eq_π, :eq_s, :eq_λ,     # sticky prices
                               :eq_c, :eq_R, :eq_u, :eq_ϕ, :eq_i, :eq_kbar, :eq_wgap,
                               :eq_gdp, :eq_z, :eq_g, :eq_μ, :eq_λ_p, :eq_λ_w,
-                              :eq_b, :eq_mp, :eq_Eπ, :eq_Eλ, :eq_Eϕ,
-                              :eq_Rk, :eq_Ei, :eq_Ew, :eq_gdp1, :eq_c1, :eq_i1, :eq_w1,    # CHECK BACK IF ANY CAN BE AUGMENTED VARIABLES
+                              :eq_b, :eq_mp, :eq_Ec,  :eq_Eπ, :eq_Eλ, :eq_Eϕ,
+                              :eq_ERk, :eq_Ei, :eq_Ew, :eq_gdp1, :eq_c1, :eq_i1, :eq_w1,    # CHECK BACK IF ANY CAN BE AUGMENTED VARIABLES
+                              :eq_λ_p1, :eq_λ_w1
+
                               :eq_y_f, :eq_k_f, :eq_L_f, :eq_Rk_f, :eq_w_f, :eq_s_f,       # flexible prices
                               :eq_λ_f, :eq_c_f, :eq_R_f, :eq_u_f, :eq_ϕ_f,
                               :eq_i_f, :eq_kbar_f, :eq_wgap_f, :eq_Ec_f, :eq_Eλ_f,
@@ -235,154 +238,154 @@ function init_parameters!(m::JPT)
                    tex_label = "g^{ss}" )
 
     # Non standard devation parameters
-    m <= parameter(:α, 0.1596, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Normal(0.30, 0.05), fixed = false,
+    m <= parameter(:α, 0.25, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Normal(0.30, 0.05), fixed = false,
                    description="α: Capital elasticity in the intermediate goods sector's production function (also known as the capital share).",
                    tex_label = "\\alpha")
 
-    m <= parameter(:ι_p, 0.1865, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), BetaAlt(0.5, 0.15), fixed = false,
+    m <= parameter(:ι_p, 0.21, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.5, 0.15), fixed = false,
                    description = "ι_p: The weight attributed to last period's inflation in price indexation. " *
                    "(1-ι_p) is the weight attributed to steady-state inflation.",
                    tex_label = "\\iota_p")
 
-    m <= parameter(:ι_w, 0.2992, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), BetaAlt(0.5, 0.15), fixed = false,
+    m <= parameter(:ι_w, 0.15, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.5, 0.15), fixed = false,
                    description="ι_w: The weight attributed to last period's wage in wage indexation. "
                     * "(1-ι_w) is the weight attributed to steady-state wages.",
                    tex_label = "\\iota_w")
 
-    m <= parameter(:γ100, 0.3673, (-5.0, 5.0), (-5., 5.), ModelConstructors.Untransformed(), Normal(0.4, 0.1), fixed = false,
+    m <= parameter(:γ100, 0.53, (-5.0, 5.0), (-5., 5.), ModelConstructors.Untransformed(), Normal(0.5, 0.025), fixed = false,
                    scaling = x -> x/100,
                    description="γ: The log of the steady-state growth rate of technology.",
                    tex_label = "100\\gamma")
 
-    m <= parameter(:h, 0.3673, (-5.0, 5.0), (-5., 5.), ModelConstructors.Untransformed(), Normal(0.4, 0.1), fixed = false,
+    m <= parameter(:h, 0.85, (-5.0, 5.0), (-5., 5.), ModelConstructors.Untransformed(), Beta(0.5, 0.1), fixed = false,
                    description="h: habit formation parameter.",
                    tex_label = "h")
 
-    m <= parameter(:λ_p_ss, 1.5000, fixed = false,
+    m <= parameter(:λ_p_ss, 0.25,(-1000,1000),(-1000, 1000), ModelConstructurs.Untransformed(), Normal(0.15, 0.05),  fixed = false,
                    description="λ_p_ss: The steady state net price markup.",
                    tex_label = "\\lambda_p")
 
-    m <= parameter(:λ_w_ss, 1.5000, fixed = false,
+    m <= parameter(:λ_w_ss, 0.12,(-1000,1000),(-1000, 1000), ModelConstructurs.Untransformed(), Normal(0.15, 0.05), fixed = false,
                    description = "λ_w_ss: The steady state net wage markup, which affects the elasticity of substitution between differentiated labor services.",
                    tex_label = "\\lambda_w")
 
-    m <= parameter(:L_ss, -45.9364, (-1000., 1000.), (-1e3, 1e3), ModelConstructors.Untransformed(), Normal(-45., 5.), fixed=false,
+    m <= parameter(:L_ss, 0.5, (-1000., 1000.), (-1e3, 1e3), ModelConstructors.Untransformed(), Normal(0.0,0.5), fixed=false,
                    description="L_ss: The steady state for log hours.",
                    tex_label = "\\log(L)^{ss}")
 
-    m <= parameter(:π_ss100, 0.5000, (1e-5, 10.), (1e-5, 10.), ModelConstructors.Exponential(), GammaAlt(0.75, 0.4), fixed = false,
+    m <= parameter(:π_ss100, 0.75, (1e-5, 10.), (1e-5, 10.), ModelConstructors.Exponential(), Normal(0.5, 0.1), fixed = false,
                    scaling = x -> 1 + x / 100,
                    description="π_ss100: The steady-state rate of net inflation multiplied by 100.",
                    tex_label = "100 \\pi^{ss}")
 
-    m <= parameter(:Fβ, 0.1402, (1e-5, 10.), (1e-5, 10.), ModelConstructors.Exponential(), GammaAlt(0.25, 0.1), fixed=false,
+    m <= parameter(:Fβ, 0.1, (1e-5, 10.), (1e-5, 10.), ModelConstructors.Exponential(), Gamma(0.25, 0.1), fixed=false,
                    scaling = x -> 1/(1 + x/100),
                    description = "Fβ: Discount rate transformed.",
                    tex_label = "100(\\beta^{-1} - 1)")
 
-    m <= parameter(:ν, 2.5975, (1e-5, 10.), (1e-5, 10.), ModelConstructors.Exponential(), Normal(2, 0.75), fixed = false,
+    m <= parameter(:ν, 4, (1e-5, 10.), (1e-5, 10.), ModelConstructors.Exponential(), Gamma(2, 0.75), fixed = false,
                    description="ν_l: The inverse Frisch elasticity.",
                    tex_label = "\\nu")
 
-    m <= parameter(:ξ_p, 0.8940, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), BetaAlt(0.5, 0.1), fixed=false,
+    m <= parameter(:ξ_p, 0.85, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.66, 0.1), fixed=false,
                    description="ξ_p: The Calvo parameter. In every period, intermediate goods producers optimize prices with probability (1-ξ_p). "
                    * "With probability ξ_p, prices are adjusted according to a weighted average of the previous period's inflation "
                    * "(π_t1) and steady-state inflation (π_ss).",
                    tex_label = "\\xi_p")
 
-    m <= parameter(:ξ_w, 0.9291, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), BetaAlt(0.5, 0.1), fixed=false,
+    m <= parameter(:ξ_w, 0.75, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.66, 0.1), fixed=false,
                    description="ξ_w: (1-ξ_w) is the probability with which households can freely choose wages in each period. "
                    * "With probability ξ_w, wages increase at a geometrically weighted average of the steady state rate of "
                    * "wage increases and last period's productivity times last period's inflation.",
                    tex_label = "\\xi_w")
 
-    m <= parameter(:χ, 1.000, (0., 10.), (1e-5, 0.), ModelConstructors.Exponential(), GammaAlt(1., 0.5), fixed = false,
+    m <= parameter(:χ, 5, (0., 10.), (1e-5, 0.), ModelConstructors.Exponential(), Gamma(5., 1.), fixed = false,
                    description="χ: The elasticity of the capital utilization cost function.",
                    tex_label = "\\chi")
 
-    m <= parameter(:S′′, 2.7314, (-15., 15.), (-15., 15.), ModelConstructors.Untransformed(), Normal(4., 1.5), fixed = false,
+    m <= parameter(:S′′, 2.5, (-15., 15.), (-15., 15.), ModelConstructors.Untransformed(), Gamma(4., 1), fixed = false,
                    description="S′′: The investment adjust cost.",
                    tex_label = "S^{\\prime\\prime}")
 
-    m <= parameter(:ψ1, 1.3679, (1e-5, 10.), (1e-5, 10.00), ModelConstructors.Exponential(), Normal(1.5, 0.25), fixed = false,
+    m <= parameter(:ψ1, 2, (1e-5, 10.), (1e-5, 10.00), ModelConstructors.Exponential(), Normal(1.7, 0.3), fixed = false,
                    description="ψ₁: Weight on inflation gap in monetary policy rule.",
                    tex_label = "\\psi_1")
 
-    m <= parameter(:ψ2, 0.0388, (-0.5, 0.5), (-0.5, 0.5), ModelConstructors.Untransformed(), Normal(0.12, 0.05), fixed = false,
+    m <= parameter(:ψ2, 0.1, (-0.5, 0.5), (-0.5, 0.5), ModelConstructors.Untransformed(), Normal(0.125, 0.05), fixed = false,
                    description="ψ₂: Weight on output gap in monetary policy rule.",
                    tex_label = "\\psi_2")
 
-    m <= parameter(:ψ3, 0.2464, (-0.5, 0.5), (-0.5, 0.5), ModelConstructors.Untransformed(), Normal(0.12, 0.05), fixed = false,
+    m <= parameter(:ψ3, 0.25, (-0.5, 0.5), (-0.5, 0.5), ModelConstructors.Untransformed(), Normal(0.125, 0.05), fixed = false,
                    description="ψ₃: Weight on rate of change of output gap in the monetary policy rule.",
                    tex_label = "\\psi_3")
 
-    m <= parameter(:η_λ_p, 0.7892, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), BetaAlt(0.50, 0.20), fixed = false,
+    m <= parameter(:η_λ_p, 0.8, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.50, 0.20), fixed = false,
                    description="η_λ_p: Moving average component in the price markup shock.",
                    tex_label = "\\eta_{\\lambda_p}")
 
-    m <= parameter(:η_λ_w, 0.4226, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), BetaAlt(0.50, 0.20), fixed = false,
+    m <= parameter(:η_λ_w, 0.25, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.50, 0.20), fixed = false,
                    description="η_λ_w: Moving average component in the wage markup shock.",
                    tex_label = "\\eta_{\\lambda_w}")
 
     # exogenous processes - autocorrelation
-    m <= parameter(:ρ_R, 0.2135, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), BetaAlt(0.5, 0.2), fixed = false,
+    m <= parameter(:ρ_R, 0.98, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_R: persistence in the monetary policy rule.",
                    tex_label = "\\rho_{R}")
 
-    m <= parameter(:ρ_z, 0.9446, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), BetaAlt(0.5, 0.2), fixed = false,
+    m <= parameter(:ρ_z, 0.7, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_z: AR(1) coefficient in the technology process.",
                    tex_label = "\\rho_{z}")
 
-    m <= parameter(:ρ_g, 0.9863, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), BetaAlt(0.5, 0.2), fixed = false,
+    m <= parameter(:ρ_g, 0.95, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_g: AR(1) coefficient in the government spending process.",
                    tex_label = "\\rho_g")
 
-    m <= parameter(:ρ_μ, 0.8735, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), BetaAlt(0.5, 0.2), fixed = false,
+    m <= parameter(:ρ_μ, 0.98, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_μ: AR(1) coefficient in capital adjustment cost process.",
                    tex_label = "\\rho_{\\mu}")
 
-    m <= parameter(:ρ_λ_p, 0.8827, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), BetaAlt(0.5, 0.2), fixed = false,
+    m <= parameter(:ρ_λ_p, 0.7, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_λ_p: AR(1) coefficient in the price mark-up shock process.",
                    tex_label = "\\rho_{\\lambda_p}")
 
-    m <= parameter(:ρ_λ_w, 0.3884, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), BetaAlt(0.5, 0.2), fixed = false,
+    m <= parameter(:ρ_λ_w, 0.15, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_λ_w: AR(1) coefficient in the wage mark-up shock process.",
                    tex_label = "\\rho_{\\lambda_w}")
 
-    m <= parameter(:ρ_b, 0.9410, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), BetaAlt(0.5, 0.2), fixed = false,
+    m <= parameter(:ρ_b, 0.75, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_b: AR(1) coefficient in the intertemporal preference shifter process.",
                    tex_label = "\\rho_b")
 
-    m <= parameter(:ρ_mp, 0.2135, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), BetaAlt(0.5, 0.2), fixed = false,
+    m <= parameter(:ρ_mp, 0.95, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.4, 0.2), fixed = false,
                    description="ρ_mp: AR(1) coefficient in the monetary policy shock process.",
                    tex_label = "\\rho_{mp}")
 
     # exogenous processes - standard deviation
-    m <= parameter(:σ_mp, 0.2380, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(2, 0.10), fixed = false,
+    m <= parameter(:σ_mp, 0.2, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(2, 0.10), fixed = false,
                    description="σ_mp: The standard deviation of the monetary policy shock.",
                    tex_label = "\\sigma_{mp}")
 
-    m <= parameter(:σ_z, 0.6742, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(2, 0.10), fixed = false,
+    m <= parameter(:σ_z, 0.9, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(0.5, 1), fixed = false,
                    description="σ_z: The standard deviation of the technology process.",
                    tex_label = "\\sigma_{z}")
 
-    m <= parameter(:σ_g, 2.5230, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(2, 0.10), fixed = false,
+    m <= parameter(:σ_g, 0.35, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(0.5, 1), fixed = false,
                    description="σ_g: The standard deviation of the government spending process.",
                    tex_label = "\\sigma_{g}")
 
-    m <= parameter(:σ_μ, 0.4559, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(2, 0.10), fixed = false,
+    m <= parameter(:σ_μ, 5, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(0.5, 1), fixed = false,
                    description="σ_μ: The standard deviation of the exogenous marginal efficiency of investment shock process.",
                    tex_label = "\\sigma_{\\mu}")
 
-    m <= parameter(:σ_λ_p, 0.1314, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(2, 0.10), fixed = false,
+    m <= parameter(:σ_λ_p, 0.15, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(0.1, 1), fixed = false,
                    description="σ_λ_p: The mean of the process that generates the price elasticity of the composite good. " *
                    "Specifically, the elasticity is (1+λ_{f,t})/(λ_{p_t}).",
                    tex_label = "\\sigma_{\\lambda_p}")
 
-    m <= parameter(:σ_λ_w, 0.3864, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(2, 0.10), fixed = false,
+    m <= parameter(:σ_λ_w, 0.2, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(0.1, 1), fixed = false,
                    tex_label = "\\sigma_{\\lambda_w}")
 
-    m <= parameter(:σ_b, 0.0292, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(2, 0.10), fixed = false,
+    m <= parameter(:σ_b, 0.05, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(0.1, 1), fixed = false,
                    description="σ_b: The standard deviation of the intertemporal preference shifter process.",
                    tex_label = "\\sigma_{b}")
 
