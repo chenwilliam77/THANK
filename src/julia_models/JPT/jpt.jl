@@ -122,12 +122,12 @@ function init_model_indices!(m::JPT)
     endogenous_states = [:y_t, :k_t, :L_t, :Rk_t, :w_t, :π_t, :s_t, :λ_t,       # sticky prices
                          :c_t, :R_t, :u_t, :ϕ_t, :i_t, :kbar_t, :wgap_t,
                          :gdp_t, :z_t, :g_t, :μ_t, :λ_p_t, :λ_w_t,
-                         :b_t, :mp_t, :Eπ_t, :Ec_t, :Eλ_t, :Eϕ_t, :ERk_t, :Ei_t
+                         :b_t, :mp_t, :Eπ_t, :Ec_t, :Eλ_t, :Eϕ_t, :ERk_t, :Ei_t,
                          :Ew_t, :gdp_t1, :c_t1, :i_t1, :w_t1, :λ_p_t1, :λ_w_t1,
                                                                                 # CHECK BACK IF ANY CAN BE AUGMENTED VARIABLES
                          :y_f_t, :k_f_t, :L_f_t, :Rk_f_t, :w_f_t, :s_f_t,       # flexible prices
                          :λ_f_t, :c_f_t, :R_f_t, :u_f_t, :ϕ_f_t,
-                         :i_f_t, :kbar_f_t, :wgap_f_t, :Ec_f_t, :Eλ_f_t,
+                         :i_f_t, :kbar_f_t, :wgap_f_t, :gdp_f_t, :Ec_f_t, :Eλ_f_t,
                          :Eϕ_f_t, :ERk_f_t, :Ei_f_t]
 
     # Exogenous shocks
@@ -143,11 +143,11 @@ function init_model_indices!(m::JPT)
                               :eq_gdp, :eq_z, :eq_g, :eq_μ, :eq_λ_p, :eq_λ_w,
                               :eq_b, :eq_mp, :eq_Ec,  :eq_Eπ, :eq_Eλ, :eq_Eϕ,
                               :eq_ERk, :eq_Ei, :eq_Ew, :eq_gdp1, :eq_c1, :eq_i1, :eq_w1,    # CHECK BACK IF ANY CAN BE AUGMENTED VARIABLES
-                              :eq_λ_p1, :eq_λ_w1
+                              :eq_λ_p1, :eq_λ_w1,
 
                               :eq_y_f, :eq_k_f, :eq_L_f, :eq_Rk_f, :eq_w_f, :eq_s_f,       # flexible prices
                               :eq_λ_f, :eq_c_f, :eq_R_f, :eq_u_f, :eq_ϕ_f,
-                              :eq_i_f, :eq_kbar_f, :eq_wgap_f, :eq_Ec_f, :eq_Eλ_f,
+                              :eq_i_f, :eq_kbar_f, :eq_wgap_f, :eq_gdp_f, :eq_Ec_f, :eq_Eλ_f,
                               :eq_Eϕ_f, :eq_ERk_f, :eq_Ei_f]
 
     # Additional states added after solving model
@@ -200,14 +200,14 @@ function JPT(subspec::String="ss1";
 
     # Set settings
     model_settings!(m)
-    default_test_settings!(m)
+    DSGE.default_test_settings!(m)
     for custom_setting in values(custom_settings)
         m <= custom_setting
     end
 
     # Set observable and pseudo-observable transformations
     init_observable_mappings!(m)
-    init_pseudo_observable_mappings!(m)
+    #init_pseudo_observable_mappings!(m)
 
     # Initialize parameters
     init_parameters!(m)
@@ -253,7 +253,7 @@ function init_parameters!(m::JPT)
                    tex_label = "\\iota_w")
 
     m <= parameter(:γ100, 0.53, (-5.0, 5.0), (-5., 5.), ModelConstructors.Untransformed(), Normal(0.5, 0.025), fixed = false,
-                   scaling = x -> x/100,
+
                    description="γ: The log of the steady-state growth rate of technology.",
                    tex_label = "100\\gamma")
 
@@ -261,11 +261,11 @@ function init_parameters!(m::JPT)
                    description="h: habit formation parameter.",
                    tex_label = "h")
 
-    m <= parameter(:λ_p_ss, 0.25,(-1000,1000),(-1000, 1000), ModelConstructurs.Untransformed(), Normal(0.15, 0.05),  fixed = false,
+    m <= parameter(:λ_p_ss, 0.25,(-1000.,1000.),(-1000., 1000.), ModelConstructors.Untransformed(), Normal(0.15, 0.05),  fixed = false,
                    description="λ_p_ss: The steady state net price markup.",
                    tex_label = "\\lambda_p")
 
-    m <= parameter(:λ_w_ss, 0.12,(-1000,1000),(-1000, 1000), ModelConstructurs.Untransformed(), Normal(0.15, 0.05), fixed = false,
+    m <= parameter(:λ_w_ss, 0.12,(-1000.,1000.),(-1000., 1000.), ModelConstructors.Untransformed(), Normal(0.15, 0.05), fixed = false,
                    description = "λ_w_ss: The steady state net wage markup, which affects the elasticity of substitution between differentiated labor services.",
                    tex_label = "\\lambda_w")
 
@@ -274,16 +274,15 @@ function init_parameters!(m::JPT)
                    tex_label = "\\log(L)^{ss}")
 
     m <= parameter(:π_ss100, 0.75, (1e-5, 10.), (1e-5, 10.), ModelConstructors.Exponential(), Normal(0.5, 0.1), fixed = false,
-                   scaling = x -> 1 + x / 100,
+
                    description="π_ss100: The steady-state rate of net inflation multiplied by 100.",
                    tex_label = "100 \\pi^{ss}")
 
     m <= parameter(:Fβ, 0.1, (1e-5, 10.), (1e-5, 10.), ModelConstructors.Exponential(), Gamma(0.25, 0.1), fixed=false,
-                   scaling = x -> 1/(1 + x/100),
                    description = "Fβ: Discount rate transformed.",
                    tex_label = "100(\\beta^{-1} - 1)")
 
-    m <= parameter(:ν, 4, (1e-5, 10.), (1e-5, 10.), ModelConstructors.Exponential(), Gamma(2, 0.75), fixed = false,
+    m <= parameter(:ν, 4., (1e-5, 10.), (1e-5, 10.), ModelConstructors.Exponential(), Gamma(2, 0.75), fixed = false,
                    description="ν_l: The inverse Frisch elasticity.",
                    tex_label = "\\nu")
 
@@ -299,7 +298,7 @@ function init_parameters!(m::JPT)
                    * "wage increases and last period's productivity times last period's inflation.",
                    tex_label = "\\xi_w")
 
-    m <= parameter(:χ, 5, (0., 10.), (1e-5, 0.), ModelConstructors.Exponential(), Gamma(5., 1.), fixed = false,
+    m <= parameter(:χ, 5., (0., 10.), (1e-5, 0.), ModelConstructors.Exponential(), Gamma(5., 1.), fixed = false,
                    description="χ: The elasticity of the capital utilization cost function.",
                    tex_label = "\\chi")
 
@@ -307,7 +306,7 @@ function init_parameters!(m::JPT)
                    description="S′′: The investment adjust cost.",
                    tex_label = "S^{\\prime\\prime}")
 
-    m <= parameter(:ψ1, 2, (1e-5, 10.), (1e-5, 10.00), ModelConstructors.Exponential(), Normal(1.7, 0.3), fixed = false,
+    m <= parameter(:ψ1, 2., (1e-5, 10.), (1e-5, 10.00), ModelConstructors.Exponential(), Normal(1.7, 0.3), fixed = false,
                    description="ψ₁: Weight on inflation gap in monetary policy rule.",
                    tex_label = "\\psi_1")
 
@@ -373,7 +372,7 @@ function init_parameters!(m::JPT)
                    description="σ_g: The standard deviation of the government spending process.",
                    tex_label = "\\sigma_{g}")
 
-    m <= parameter(:σ_μ, 5, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(0.5, 1), fixed = false,
+    m <= parameter(:σ_μ, 5., (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(0.5, 1), fixed = false,
                    description="σ_μ: The standard deviation of the exogenous marginal efficiency of investment shock process.",
                    tex_label = "\\sigma_{\\mu}")
 
@@ -399,6 +398,7 @@ function init_parameters!(m::JPT)
     m <= SteadyStateParameter(:expL_ss, NaN, tex_label = "L^{ss}")
     m <= SteadyStateParameter(:Rk_ss, NaN, description = "Steady-state short-term rate of return on capital.", tex_label = "R^{k, ss}")
     m <= SteadyStateParameter(:s_ss, NaN, description = "Steady-state marginal cost", tex_label = "s^{ss}")
+    m <= SteadyStateParameter(:w_ss, NaN, tex_label = "w^{ss}")
     m <= SteadyStateParameter(:kL_ss, NaN, tex_label = "k^{ss}/L^{ss}")
     m <= SteadyStateParameter(:FL_ss, NaN, description = "Steady-state ratio of fixed costs to labor", tex_label = "F^{ss}/L^{ss}")
     m <= SteadyStateParameter(:yL_ss, NaN, description = "Steady-state ratio of output to labor", tex_label = "y^{ss}/L^{ss}")
@@ -407,6 +407,7 @@ function init_parameters!(m::JPT)
     m <= SteadyStateParameter(:F_ss, NaN, tex_label = "F^{ss}")
     m <= SteadyStateParameter(:y_ss, NaN, tex_label = "y^{ss}")
     m <= SteadyStateParameter(:c_ss, NaN, tex_label = "c^{ss}")
+
 end
 
 """
@@ -419,22 +420,23 @@ the parameters of `m` are updated.
 """
 function steadystate!(m::JPT)
 
-    m[:γ]        = m[:γ100] ./ 100.
+    m[:γ]        = m[:γ100] / 100.
     m[:β]        = 100. / (m[:Fβ] + 100.)
     m[:r_ss]     = exp(m[:γ]) / m[:β] - 1.
     m[:r_ss100]  = 100. * m[:r_ss]
-    m[:π_ss]     = m[:π_ss100] ./ 100.
+    m[:π_ss]     = m[:π_ss100] / 100.
     m[:g_ss]     = 1. / (1. - m[:g_ss_ratio])
+
     m[:expL_ss]  = exp(m[:L_ss])
     m[:Rk_ss]    = exp(m[:γ]) / m[:β] - 1. + m[:δ]
     m[:s_ss]     = 1. / (1. + m[:λ_p_ss])
     m[:w_ss]     = (m[:s_ss] * ((1. - m[:α]) ^ (1. - m[:α])) / ((m[:α] ^ (-m[:α])) * m[:Rk_ss] ^ m[:α])) ^ (1. / (1. - m[:α]))
-    m[:kL_ss]    = (m[:w_ss] / m[:Rk_ss]) ^ (m[:α] / (1. - m[:α]))
+    m[:kL_ss]    = (m[:w_ss] / m[:Rk_ss]) * (m[:α] / (1. - m[:α]))
     m[:FL_ss]    = m[:kL_ss] ^ m[:α] - m[:Rk_ss] * m[:kL_ss] - m[:w_ss]
     m[:yL_ss]    = m[:kL_ss] ^ m[:α] - m[:FL_ss]
     m[:k_ss]     = m[:kL_ss] * m[:expL_ss]
     m[:i_ss]     = (1. - (1. - m[:δ]) * exp(-m[:γ])) * m[:k_ss] * exp(m[:γ])
-    m[:F]        = m[:FL_ss] * m[:expL_ss]
+    m[:F_ss]     = m[:FL_ss] * m[:expL_ss]
     m[:y_ss]     = m[:yL_ss] * m[:expL_ss]
     m[:c_ss]     = m[:y_ss] / m[:g_ss] -  m[:i_ss]
 
@@ -443,7 +445,7 @@ end
 
 function model_settings!(m::JPT)
 
-    default_settings!(m)
+    DSGE.default_settings!(m)
 
     # Anticipated shocks
     m <= Setting(:n_anticipated_shocks, 0,
