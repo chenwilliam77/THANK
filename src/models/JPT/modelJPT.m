@@ -1,5 +1,5 @@
-function [G1,C,impact,eu,SDX,zmat,NY,NX]=modelJPT(param)
-
+% function [GAM0,GAM1,PSI,PPI,G1,C,impact,eu,SDX,zmat,NY,NX]=modelJPT(param) %  added GAM0,GAM1,PSI,PPI to return list for testing
+function [GAM0,GAM1,PSI,PPI,ssvec]=modelJPT(param) % just returning these matrices for testing, all gensys calculations commented out
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % For given parameter values, this function
 % 1) puts the model of Justiniano, Primiceri and Tambalotti (2009)
@@ -181,7 +181,7 @@ F=FLss*expLss;
 yss=yLss*expLss;
 css=yss/gss-iss;
 
-
+ssvec = [gamma,beta,rss,rss100,pss,gss,expLss,Rkss,sss,wss,kLss,FLss,yLss,kss,iss,F,yss,css];
 % -------------------------------------------------------------------------
 % System Matrices
 % -------------------------------------------------------------------------
@@ -196,6 +196,7 @@ C = zeros(NY,1) ;
 % -------------------------------------------------------------------------
 GAM0(y,y)=1;
 GAM0(y,k)=-((yss+F)/yss)*alpha;
+disp(-((yss+F)/yss)*alpha)
 GAM0(y,L)=-((yss+F)/yss)*(1-alpha);
 
 % ===
@@ -484,7 +485,7 @@ GAM0(c_1,c_1)=1; GAM1(c_1,c)=1;
 GAM0(i_1,i_1)=1; GAM1(i_1,i)=1;
 GAM0(w_1,w_1)=1; GAM1(w_1,w)=1;
 
-
+%{
 % Solution of the RE system of equations using Chris Sims' Gensys
 % -------------------------------------------------------------------------
 [G1,C,impact,fmat,fwt,ywt,gev,eu]=gensys(GAM0,GAM1,C,PSI,PPI) ;
@@ -512,3 +513,4 @@ C(4)=Lss;
 C(5)=gamma100;
 C(6)=pss100;
 C(7)=pss100+rss100;
+%}
