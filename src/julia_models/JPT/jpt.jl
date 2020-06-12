@@ -141,7 +141,7 @@ function init_model_indices!(m::JPT)
     equilibrium_conditions = [:eq_y, :eq_k, :eq_L, :eq_Rk, :eq_w, :eq_π, :eq_s, :eq_λ,     # sticky prices
                               :eq_c, :eq_R, :eq_u, :eq_ϕ, :eq_i, :eq_kbar, :eq_wgap,
                               :eq_gdp, :eq_z, :eq_g, :eq_μ, :eq_λ_p, :eq_λ_w,
-                              :eq_b, :eq_mp, :eq_Ec,  :eq_Eπ, :eq_Eλ, :eq_Eϕ,
+                              :eq_b, :eq_mp, :eq_Eπ, :eq_Ec, :eq_Eλ, :eq_Eϕ,
                               :eq_ERk, :eq_Ei, :eq_Ew, :eq_gdp1, :eq_c1, :eq_i1, :eq_w1,    # CHECK BACK IF ANY CAN BE AUGMENTED VARIABLES
                               :eq_λ_p1, :eq_λ_w1,
 
@@ -318,44 +318,44 @@ function init_parameters!(m::JPT)
                    description="ψ₃: Weight on rate of change of output gap in the monetary policy rule.",
                    tex_label = "\\psi_3")
 
-    m <= parameter(:η_λ_p, 0.8, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.50, 0.20), fixed = false,
+    m <= parameter(:η_λ_p, 0.75, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.50, 0.20), fixed = false,
                    description="η_λ_p: Moving average component in the price markup shock.",
                    tex_label = "\\eta_{\\lambda_p}")
 
-    m <= parameter(:η_λ_w, 0.25, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.50, 0.20), fixed = false,
+    m <= parameter(:η_λ_w, 0.95, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.50, 0.20), fixed = false,
                    description="η_λ_w: Moving average component in the wage markup shock.",
                    tex_label = "\\eta_{\\lambda_w}")
 
     # exogenous processes - autocorrelation
-    m <= parameter(:ρ_R, 0.98, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
+    m <= parameter(:ρ_R, 0.8, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_R: persistence in the monetary policy rule.",
                    tex_label = "\\rho_{R}")
 
-    m <= parameter(:ρ_z, 0.7, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
+    m <= parameter(:ρ_z, 0.25, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_z: AR(1) coefficient in the technology process.",
                    tex_label = "\\rho_{z}")
 
-    m <= parameter(:ρ_g, 0.95, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
+    m <= parameter(:ρ_g, 0.98, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_g: AR(1) coefficient in the government spending process.",
                    tex_label = "\\rho_g")
 
-    m <= parameter(:ρ_μ, 0.98, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
+    m <= parameter(:ρ_μ, 0.7, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_μ: AR(1) coefficient in capital adjustment cost process.",
                    tex_label = "\\rho_{\\mu}")
 
-    m <= parameter(:ρ_λ_p, 0.7, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
+    m <= parameter(:ρ_λ_p, 0.95, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_λ_p: AR(1) coefficient in the price mark-up shock process.",
                    tex_label = "\\rho_{\\lambda_p}")
 
-    m <= parameter(:ρ_λ_w, 0.15, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
+    m <= parameter(:ρ_λ_w, 0.98, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_λ_w: AR(1) coefficient in the wage mark-up shock process.",
                    tex_label = "\\rho_{\\lambda_w}")
 
-    m <= parameter(:ρ_b, 0.75, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
+    m <= parameter(:ρ_b, 0.7, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_b: AR(1) coefficient in the intertemporal preference shifter process.",
                    tex_label = "\\rho_b")
 
-    m <= parameter(:ρ_mp, 0.95, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.4, 0.2), fixed = false,
+    m <= parameter(:ρ_mp, 0.15, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.4, 0.2), fixed = false,
                    description="ρ_mp: AR(1) coefficient in the monetary policy shock process.",
                    tex_label = "\\rho_{mp}")
 
@@ -396,9 +396,10 @@ function init_parameters!(m::JPT)
     m <= SteadyStateParameter(:π_ss, NaN, tex_label = "\\pi^{ss}")
     m <= SteadyStateParameter(:g_ss, NaN, tex_label = "G^{ss}")
     m <= SteadyStateParameter(:expL_ss, NaN, tex_label = "L^{ss}")
-    m <= SteadyStateParameter(:Rk_ss, NaN, description = "Steady-state short-term rate of return on capital.", tex_label = "R^{k, ss}")
+    m <= SteadyStateParameter(:Rk_ss, NaN, description = "Steady-state short-term rate of return on capital.",
+                              tex_label = "R^{k, ss}")
     m <= SteadyStateParameter(:s_ss, NaN, description = "Steady-state marginal cost", tex_label = "s^{ss}")
-    m <= SteadyStateParameter(:w_ss, NaN, tex_label = "w^{ss}")
+    m <= SteadyStateParameter(:w_ss, NaN, description = "Steady-state wage", tex_label = "w^{ss}")
     m <= SteadyStateParameter(:kL_ss, NaN, tex_label = "k^{ss}/L^{ss}")
     m <= SteadyStateParameter(:FL_ss, NaN, description = "Steady-state ratio of fixed costs to labor", tex_label = "F^{ss}/L^{ss}")
     m <= SteadyStateParameter(:yL_ss, NaN, description = "Steady-state ratio of output to labor", tex_label = "y^{ss}/L^{ss}")

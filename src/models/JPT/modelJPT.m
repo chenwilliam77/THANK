@@ -1,5 +1,4 @@
-% function [GAM0,GAM1,PSI,PPI,G1,C,impact,eu,SDX,zmat,NY,NX]=modelJPT(param) %  added GAM0,GAM1,PSI,PPI to return list for testing
-function [GAM0,GAM1,PSI,PPI,ssvec]=modelJPT(param) % just returning these matrices for testing, all gensys calculations commented out
+function [G1,C,M,eu,SDX,H,NY,NX]=modelJPT(param) % just returning these matrices for testing, all gensys calculations commented out
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % For given parameter values, this function
 % 1) puts the model of Justiniano, Primiceri and Tambalotti (2009)
@@ -485,7 +484,8 @@ GAM0(c_1,c_1)=1; GAM1(c_1,c)=1;
 GAM0(i_1,i_1)=1; GAM1(i_1,i)=1;
 GAM0(w_1,w_1)=1; GAM1(w_1,w)=1;
 
-%{
+keyboard;
+% save('eqcond.mat', 'GAM0', 'GAM1', 'C', 'PSI', 'PPI');
 % Solution of the RE system of equations using Chris Sims' Gensys
 % -------------------------------------------------------------------------
 [G1,C,impact,fmat,fwt,ywt,gev,eu]=gensys(GAM0,GAM1,C,PSI,PPI) ;
@@ -513,4 +513,12 @@ C(4)=Lss;
 C(5)=gamma100;
 C(6)=pss100;
 C(7)=pss100+rss100;
-%}
+
+% keyboard;
+% steadystate = ssvec;
+% TTT = G1;
+% RRR = impact;
+% ZZ  = zmat;
+% DD  = C;
+% QQ  = SDX^2;
+% save('solve.mat', 'steadystate', 'TTT', 'RRR', 'ZZ', 'DD', 'QQ');
