@@ -5,10 +5,11 @@ import DSGE: eqcond, measurement, init_observable_mappings!, init_pseudo_observa
 # src directory
 include("util.jl")
 
-# julia_models/JPT
-include("julia_models/JPT/jpt.jl")
-include("julia_models/JPT/augment_states.jl")
-include("julia_models/JPT/eqcond.jl")
-include("julia_models/JPT/measurement.jl")
-include("julia_models/JPT/observables.jl")
-include("julia_models/JPT/subspecs.jl")
+# julia_models/THANK
+include("julia_models/THANK/thank.jl")
+#include("julia_models/THANK/augment_states.jl")
+include("julia_models/THANK/eqcond.jl")
+include("julia_models/THANK/measurement.jl")
+include("julia_models/THANK/observables.jl")
+include("julia_models/THANK/subspecs.jl")
+include("julia_models/THANK/augment_states.jl")
