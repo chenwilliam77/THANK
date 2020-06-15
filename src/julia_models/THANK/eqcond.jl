@@ -27,6 +27,8 @@ function eqcond(m::THANK)
 
     ### ENDOGENOUS STATES ###
 
+    ### 1. Production function
+
     # Sticky prices
     Γ0[eq[:eq_y], endo[:y_t]] = 1.
     Γ0[eq[:eq_y], endo[:k_t]] = -((m[:y_ss] + m[:F_ss]) / m[:y_ss]) * m[:α]
@@ -87,7 +89,7 @@ function eqcond(m::THANK)
     Γ0[eq[:eq_c_h], endo[:w_t]] = -m[:w_ss] * m[:expL_ss] / m[:c_h_ss]
     Γ0[eq[:eq_c_h], endo[:L_t]] = -m[:w_ss] * m[:expL_ss] / m[:c_h_ss]
     Γ0[eq[:eq_c_h], endo[:t_h_t]] = -m[:y_ss] / m[:c_h_ss]
-    Γ0[eq[:eq_c_h, endo[:g_t]]  = m[:gL_ss] / m[:c_h_L_ss]
+    Γ0[eq[:eq_c_h], endo[:g_t]]  = m[:gL_ss] / m[:c_h_L_ss]
 
     # Flexible prices
     Γ0[eq[:eq_c_f], endo[:c_f_t]]  = 1
@@ -104,26 +106,26 @@ function eqcond(m::THANK)
 
     # Sticky prices
     expγ = exp(m[:γ])
-    Γ0[eq[:eq_λ], endo[:λ_t]]     = 1.
+    Γ0[eq[:eq_λ], endo[:λ_t]]     = 1
     Γ0[eq[:eq_λ], endo[:λ_h_t]]   = -m[:θ] *(m[:λ_h_ss] / m[:λ_ss])
     Γ0[eq[:eq_λ], endo[:λ_s_t]]   = -(1 - m[:θ]) * (m[:λ_s_ss] / m[:λ_ss])
 
     Γ0[eq[:eq_λ_s], endo[:λ_s_t]] = 1
-    Γ0[eq[:eq_λ_s], endo[:b_t]]   = -1 / ((1 - m[:ρ_b]) * (m[:σ] * m[:λ_s_ss] + (1 - m[:σ]) * m[:λ_h_ss]) /
-                                         *(expγ * m[:c_s_ss] - m[:h] * m[:c_ss]) * (expγ * m[:c_h_ss] -   /
-                                         m[:h] * m[:c_ss]) / (m[:h] * m[:c_ss] * (m[:σ] * m[:λ_s_ss]      /
-                                         *(expγ * m[:c_h_ss] - m[:h] * m[:c_ss]) + (1 - m[:σ]) * m[:λ_h_ss] /
-                                         *(expγ * m[:c_s_ss] - m[:h] * m[:c_ss]))))
+    Γ0[eq[:eq_λ_s], endo[:b_t]]   = -1 / ((1 - m[:ρ_b]) * (m[:σ] * m[:λ_s_ss] + (1 - m[:σ]) * m[:λ_h_ss])*
+                                         (expγ * m[:c_s_ss] - m[:h] * m[:c_ss]) * (expγ * m[:c_h_ss] -
+                                         m[:h] * m[:c_ss]) / (m[:h] * m[:c_ss] * (m[:σ] * m[:λ_s_ss] *
+                                         (expγ * m[:c_h_ss] - m[:h] * m[:c_ss]) + (1 - m[:σ]) * m[:λ_h_ss]*
+                                         (expγ * m[:c_s_ss] - m[:h] * m[:c_ss]))))
     Γ0[eq[:eq_λ_s], endo[:z_t]]   = m[:h] * m[:c_ss]  / (expγ * m[:c_s_ss] - m[:h] * m[:c_ss])
     Γ0[eq[:eq_λ_s], endo[:c_s_t]] = expγ * m[:c_s_ss] / (expγ * m[:c_s_ss] - m[:h] * m[:c_ss])
     Γ1[eq[:eq_λ_s], endo[:c_t]]   = m[:h] * m[:c_ss]  / (expγ * m[:c_s_ss] - m[:h] * m[:c_ss])
 
     Γ0[eq[:eq_λ_h], endo[:λ_h_t]] = 1
-    Γ0[eq[:eq_λ_h], endo[:b_t]]   =  -1 / ((1 - m[:ρ_b]) * (m[:σ] * m[:λ_s_ss] + (1 - m[:σ]) * m[:λ_h_ss]) /
-                                         *(expγ * m[:c_s_ss] - m[:h] * m[:c_ss]) * (expγ * m[:c_h_ss] -   /
-                                         m[:h] * m[:c_ss]) / (m[:h] * m[:c_ss] * (m[:σ] * m[:λ_s_ss]      /
-                                         *(expγ * m[:c_h_ss] - m[:h] * m[:c_ss]) + (1 - m[:σ]) * m[:λ_h_ss] /
-                                         *(expγ * m[:c_s_ss] - m[:h] * m[:c_ss]))))
+    Γ0[eq[:eq_λ_h], endo[:b_t]]   =  -1 / ((1 - m[:ρ_b]) * (m[:σ] * m[:λ_s_ss] + (1 - m[:σ]) * m[:λ_h_ss])*
+                                         (expγ * m[:c_s_ss] - m[:h] * m[:c_ss]) * (expγ * m[:c_h_ss] -
+                                         m[:h] * m[:c_ss]) / (m[:h] * m[:c_ss] * (m[:σ] * m[:λ_s_ss] *
+                                         (expγ * m[:c_h_ss] - m[:h] * m[:c_ss]) + (1 - m[:σ]) * m[:λ_h_ss]*
+                                         (expγ * m[:c_s_ss] - m[:h] * m[:c_ss]))))
     Γ0[eq[:eq_λ_h], endo[:z_t]]   = m[:h] * m[:c_ss]  / (expγ * m[:c_h_ss] - m[:h] * m[:c_ss])
     Γ0[eq[:eq_λ_h], endo[:c_h_t]] = expγ * m[:c_h_ss] / (expγ * m[:c_h_ss] - m[:h] * m[:c_ss])
     Γ1[eq[:eq_λ_h], endo[:c_t]]   = m[:h] * m[:c_ss]  / (expγ * m[:c_h_ss] - m[:h] * m[:c_ss])
@@ -132,8 +134,8 @@ function eqcond(m::THANK)
     Γ0[eq[:eq_c_s], endo[:R_t]]   = -1
     Γ0[eq[:eq_c_s], endo[:z_t]]   = m[:ρ_z]
     Γ0[eq[:eq_c_s], endo[:Eπ_t]]  = 1
-    Γ0[eq[:eq_c_s], endo[:Eλ_s_t]]= -(m[:σ] * m[:λ_s_ss]     / (m[:σ] * m[:λ_s_ss] + (1 - m[:σ]) * m[:λ_h_ss])
-    Γ0[eq[:eq_c_s], endo[:Eλ_h_t]]= -((1-m[:σ]) * m[:λ_s_ss] / (m[:σ] * m[:λ_s_ss] + (1 - m[:σ]) * m[:λ_h_ss])
+    Γ0[eq[:eq_c_s], endo[:Eλ_s_t]]= -(m[:σ] * m[:λ_s_ss])     / (m[:σ] * m[:λ_s_ss] + (1 - m[:σ]) * m[:λ_h_ss])
+    Γ0[eq[:eq_c_s], endo[:Eλ_h_t]]= -((1-m[:σ]) * m[:λ_h_ss]) / (m[:σ] * m[:λ_s_ss] + (1 - m[:σ]) * m[:λ_h_ss])
     Γ0[eq[:eq_c_s], endo[:Ey_t]]  = -(m[:σ′]) * m[:σ] * (m[:λ_s_ss] - m[:λ_h_ss]) /
                                         (m[:σ] * m[:λ_s_ss] + (1 - m[:σ]) * m[:λ_h_ss])
     # Flexible prices
@@ -142,22 +144,22 @@ function eqcond(m::THANK)
     Γ0[eq[:eq_λ_f], endo[:λ_s_f_t]]   = -(1 - m[:θ]) * (m[:λ_s_ss] / m[:λ_ss])
 
     Γ0[eq[:eq_λ_s_f], endo[:λ_s_f_t]] = 1
-    Γ0[eq[:eq_λ_s_f], endo[:b_t]]     = -1 / ((1 - m[:ρ_b]) * (m[:σ] * m[:λ_s_ss] + (1 - m[:σ]) * m[:λ_h_ss]) /
-                                         *(expγ * m[:c_s_ss] - m[:h] * m[:c_ss]) * (expγ * m[:c_h_ss] -   /
-                                         m[:h] * m[:c_ss]) / (m[:h] * m[:c_ss] * (m[:σ] * m[:λ_s_ss]      /
-                                         *(expγ * m[:c_h_ss] - m[:h] * m[:c_ss]) + (1 - m[:σ]) * m[:λ_h_ss] /
-                                         *(expγ * m[:c_s_ss] - m[:h] * m[:c_ss]))))
-    Γ0[eq[:eq_λ_s_f], endo[:z_t]]   = m[:h] * m[:c_ss]  / (expγ * m[:c_s_ss] - m[:h] * m[:c_ss])
+    Γ0[eq[:eq_λ_s_f], endo[:b_t]]     = -1 / ((1 - m[:ρ_b]) * (m[:σ] * m[:λ_s_ss] + (1 - m[:σ]) * m[:λ_h_ss])*
+                                         (expγ * m[:c_s_ss] - m[:h] * m[:c_ss]) * (expγ * m[:c_h_ss] -
+                                         m[:h] * m[:c_ss]) / (m[:h] * m[:c_ss] * (m[:σ] * m[:λ_s_ss] *
+                                         (expγ * m[:c_h_ss] - m[:h] * m[:c_ss]) + (1 - m[:σ]) * m[:λ_h_ss]*
+                                         (expγ * m[:c_s_ss] - m[:h] * m[:c_ss]))))
+    Γ0[eq[:eq_λ_s_f], endo[:z_t]]     = m[:h] * m[:c_ss]  / (expγ * m[:c_s_ss] - m[:h] * m[:c_ss])
     Γ0[eq[:eq_λ_s_f], endo[:c_s_f_t]] = expγ * m[:c_s_ss] / (expγ * m[:c_s_ss] - m[:h] * m[:c_ss])
     Γ1[eq[:eq_λ_s_f], endo[:c_f_t]]   = m[:h] * m[:c_ss]  / (expγ * m[:c_s_ss] - m[:h] * m[:c_ss])
 
-    Γ0[eq[:eq_λ_h_f], endo[:λ_h_f+t]] = 1
-    Γ0[eq[:eq_λ_h_f], endo[:b_t]]   =  -1 / ((1 - m[:ρ_b]) * (m[:σ] * m[:λ_s_ss] + (1 - m[:σ]) * m[:λ_h_ss]) /
-                                         *(expγ * m[:c_s_ss] - m[:h] * m[:c_ss]) * (expγ * m[:c_h_ss] -   /
-                                         m[:h] * m[:c_ss]) / (m[:h] * m[:c_ss] * (m[:σ] * m[:λ_s_ss]      /
-                                         *(expγ * m[:c_h_ss] - m[:h] * m[:c_ss]) + (1 - m[:σ]) * m[:λ_h_ss] /
-                                         *(expγ * m[:c_s_ss] - m[:h] * m[:c_ss]))))
-    Γ0[eq[:eq_λ_h_f], endo[:z_t]]   = m[:h] * m[:c_ss]  / (expγ * m[:c_h_ss] - m[:h] * m[:c_ss])
+    Γ0[eq[:eq_λ_h_f], endo[:λ_h_f_t]] = 1
+    Γ0[eq[:eq_λ_h_f], endo[:b_t]]     = -1 / ((1 - m[:ρ_b]) * (m[:σ] * m[:λ_s_ss] + (1 - m[:σ]) * m[:λ_h_ss])*
+                                         (expγ * m[:c_s_ss] - m[:h] * m[:c_ss]) * (expγ * m[:c_h_ss] -
+                                         m[:h] * m[:c_ss]) / (m[:h] * m[:c_ss] * (m[:σ] * m[:λ_s_ss] *
+                                         (expγ * m[:c_h_ss] - m[:h] * m[:c_ss]) + (1 - m[:σ]) * m[:λ_h_ss]*
+                                         (expγ * m[:c_s_ss] - m[:h] * m[:c_ss]))))
+    Γ0[eq[:eq_λ_h_f], endo[:z_t]]     = m[:h] * m[:c_ss]  / (expγ * m[:c_h_ss] - m[:h] * m[:c_ss])
     Γ0[eq[:eq_λ_h_f], endo[:c_h_f_t]] = expγ * m[:c_h_ss] / (expγ * m[:c_h_ss] - m[:h] * m[:c_ss])
     Γ1[eq[:eq_λ_h_f], endo[:c_f_t]]   = m[:h] * m[:c_ss]  / (expγ * m[:c_h_ss] - m[:h] * m[:c_ss])
 
@@ -165,8 +167,8 @@ function eqcond(m::THANK)
     Γ0[eq[:eq_c_s_f], endo[:R_f_t]]   = -1
     Γ0[eq[:eq_c_s_f], endo[:z_t]]     = m[:ρ_z]
     # Γ0[eq[:eq_c_s_f], endo[:Eπ_t]]  = 1  # matlab code says "CHECK 'epstar' "
-    Γ0[eq[:eq_c_s_f], endo[:Eλ_s_f_t]]= -(m[:σ] * m[:λ_s_ss]     / (m[:σ] * m[:λ_s_ss] + (1 - m[:σ]) * m[:λ_h_ss])
-    Γ0[eq[:eq_c_s_f], endo[:Eλ_h_f_t]]= -((1-m[:σ]) * m[:λ_s_ss] / (m[:σ] * m[:λ_s_ss] + (1 - m[:σ]) * m[:λ_h_ss])
+    Γ0[eq[:eq_c_s_f], endo[:Eλ_s_f_t]]= -(m[:σ] * m[:λ_s_ss])     / (m[:σ] * m[:λ_s_ss] + (1 - m[:σ]) * m[:λ_h_ss])
+    Γ0[eq[:eq_c_s_f], endo[:Eλ_h_f_t]]= -((1-m[:σ]) * m[:λ_h_ss]) / (m[:σ] * m[:λ_s_ss] + (1 - m[:σ]) * m[:λ_h_ss])
     Γ0[eq[:eq_c_s_f], endo[:Ey_f_t]]  = -(m[:σ′]) * m[:σ] * (m[:λ_s_ss] - m[:λ_h_ss]) /
                                         (m[:σ] * m[:λ_s_ss] + (1 - m[:σ]) * m[:λ_h_ss])
 
@@ -205,14 +207,14 @@ function eqcond(m::THANK)
     Γ0[eq[:eq_ϕ], endo[:ϕ_t]] = 1.
     Γ0[eq[:eq_ϕ], endo[:Eϕ_t]] = -m[:β] * exp(-m[:γ]) * (1 - m[:δ])
     Γ0[eq[:eq_ϕ], endo[:z_t]] = m[:ρ_z]
-    Γ0[eq[:eq_ϕ], endo[:Eλ_t]] = -1 * (1 - m[:β] * exp(-m[:γ]) * (1 - m[:δ]))
+    Γ0[eq[:eq_ϕ], endo[:Eλ_s_t]] = -(1 - m[:β] * exp(-m[:γ]) * (1 - m[:δ]))
     Γ0[eq[:eq_ϕ], endo[:ERk_t]] = -(1 - m[:β] * exp(-m[:γ]) * (1 - m[:δ]))
 
     #Flexible prices
     Γ0[eq[:eq_ϕ_f], endo[:ϕ_f_t]] = 1
     Γ0[eq[:eq_ϕ_f], endo[:Eϕ_f_t]] = -m[:β] * exp(-m[:γ]) * (1 - m[:δ])
     Γ0[eq[:eq_ϕ_f], endo[:z_t]] = m[:ρ_z]
-    Γ0[eq[:eq_ϕ_f], endo[:Eλ_f_t]] = -(1 - m[:β] * exp(-m[:γ]) * (1 - m[:δ]))
+    Γ0[eq[:eq_ϕ_f], endo[:Eλ_s_f_t]] = -(1 - m[:β] * exp(-m[:γ]) * (1 - m[:δ]))
     Γ0[eq[:eq_ϕ_f], endo[:ERk_f_t]] = -(1 - m[:β] * exp(-m[:γ]) *(1 - m[:δ]))
 
     ### 9. Investment FOC
@@ -289,22 +291,22 @@ function eqcond(m::THANK)
     #Flexible prices
     Γ0[eq[:eq_wgap], endo[:wgap_t]] = 1
     Γ0[eq[:eq_wgap], endo[:w_t]] = -1
-    Γ0[eq[:eq_wgap], endo[:b_t]] =  -1 / ((1 - m[:ρ_b]) * (m[:σ] * m[:λ_s_ss] + (1 - m[:σ]) * m[:λ_h_ss]) /
-                                         *(expγ * m[:c_s_ss] - m[:h] * m[:c_ss]) * (expγ * m[:c_h_ss] -   /
-                                         m[:h] * m[:c_ss]) / (m[:h] * m[:c_ss] * (m[:σ] * m[:λ_s_ss]      /
-                                         *(expγ * m[:c_h_ss] - m[:h] * m[:c_ss]) + (1 - m[:σ]) * m[:λ_h_ss] /
-                                         *(expγ * m[:c_s_ss] - m[:h] * m[:c_ss]))))
+    Γ0[eq[:eq_wgap], endo[:b_t]] = 1 / ((1 - m[:ρ_b]) * (m[:σ] * m[:λ_s_ss] + (1 - m[:σ]) * m[:λ_h_ss])*
+                                         (expγ * m[:c_s_ss] - m[:h] * m[:c_ss]) * (expγ * m[:c_h_ss] -
+                                         m[:h] * m[:c_ss]) / (m[:h] * m[:c_ss] * (m[:σ] * m[:λ_s_ss] *
+                                         (expγ * m[:c_h_ss] - m[:h] * m[:c_ss]) + (1 - m[:σ]) * m[:λ_h_ss]*
+                                         (expγ * m[:c_s_ss] - m[:h] * m[:c_ss]))))
     Γ0[eq[:eq_wgap], endo[:L_t]] = m[:ν]
     Γ0[eq[:eq_wgap], endo[:λ_t]] = -1
 
     #Sticky prices
     Γ0[eq[:eq_wgap_f], endo[:wgap_f_t]] = 1
     Γ0[eq[:eq_wgap_f], endo[:w_f_t]] = -1
-    Γ0[eq[:eq_wgap_f], endo[:b_t]] =  -1 / ((1 - m[:ρ_b]) * (m[:σ] * m[:λ_s_ss] + (1 - m[:σ]) * m[:λ_h_ss]) /
-                                         *(expγ * m[:c_s_ss] - m[:h] * m[:c_ss]) * (expγ * m[:c_h_ss] -   /
-                                         m[:h] * m[:c_ss]) / (m[:h] * m[:c_ss] * (m[:σ] * m[:λ_s_ss]      /
-                                         *(expγ * m[:c_h_ss] - m[:h] * m[:c_ss]) + (1 - m[:σ]) * m[:λ_h_ss] /
-                                         *(expγ * m[:c_s_ss] - m[:h] * m[:c_ss]))))
+    Γ0[eq[:eq_wgap_f], endo[:b_t]] = 1 / ((1 - m[:ρ_b]) * (m[:σ] * m[:λ_s_ss] + (1 - m[:σ]) * m[:λ_h_ss])*
+                                         (expγ * m[:c_s_ss] - m[:h] * m[:c_ss]) * (expγ * m[:c_h_ss] -
+                                         m[:h] * m[:c_ss]) / (m[:h] * m[:c_ss] * (m[:σ] * m[:λ_s_ss] *
+                                         (expγ * m[:c_h_ss] - m[:h] * m[:c_ss]) + (1 - m[:σ]) * m[:λ_h_ss]*
+                                         (expγ * m[:c_s_ss] - m[:h] * m[:c_ss]))))
     Γ0[eq[:eq_wgap_f], endo[:L_f_t]] = m[:ν]
     Γ0[eq[:eq_wgap_f], endo[:λ_f_t]] = -1
 
@@ -336,16 +338,18 @@ function eqcond(m::THANK)
 
     #Sticky prices
     Γ0[eq[:eq_u], endo[:c_t]] = m[:c_ss] / m[:y_ss]
-    Γ0[eq[:eq_u], endo[:i_t]] = (1 - m[:θ]) * m[:i_ss] / m[:y_ss]
+    Γ0[eq[:eq_u], endo[:i_t]] = (1 - m[:θ]) * m[:i_s_ss] / m[:y_ss]
     #Γ0[eq[:eq_u], endo[:y_t]] = -1 / m[:g_ss] matlab code has these two lines commented out
     #Γ0[eq[:eq_u], endo[:g_t]] = 1 / m[:g_ss]
     Γ0[eq[:eq_u], endo[:u_t]] = m[:k_ss] * m[:Rk_ss] / m[:y_ss]
+    Γ0[eq[:eq_u], endo[:y_t]] = -1
+    Γ0[eq[:eq_u], endo[:g_t]] = m[:gy_ss]
 
     #Flexible Prices
     Γ0[eq[:eq_u_f], endo[:c_f_t]] = m[:c_ss] / m[:y_ss]
-    Γ0[eq[:eq_u_f], endo[:i_f_t]] = (1 - m[:θ]) * m[:i_ss] / m[:y_ss]
-    Γ0[eq[:eq_u_f], endo[:y_f_t]] = -1 / m[:g_ss]
-    Γ0[eq[:eq_u_f], endo[:g_t]] = 1 / m[:g_ss]
+    Γ0[eq[:eq_u_f], endo[:i_f_t]] = (1 - m[:θ]) * m[:i_s_ss] / m[:y_ss]
+    Γ0[eq[:eq_u_f], endo[:y_f_t]] = -1
+    Γ0[eq[:eq_u_f], endo[:g_t]] = m[:gy_ss]
     Γ0[eq[:eq_u_f], endo[:u_f_t]] = m[:k_ss] * m[:Rk_ss] / m[:y_ss]
 
     ### Exogenous shocks
@@ -373,7 +377,7 @@ function eqcond(m::THANK)
     # mp
     Γ0[eq[:eq_mp], endo[:mp_t]] = 1
     Γ1[eq[:eq_mp], endo[:mp_t]] = m[:ρ_mp]
-    Ψ[eq[:eq_mp], exo[:mp_sh]]  = 1
+    Ψ[eq[:eq_mp], exo[:R_sh]]  = 1
 
     # λ_w
     Γ0[eq[:eq_λ_w], endo[:λ_w_t]]   = 1
@@ -456,7 +460,7 @@ function eqcond(m::THANK)
     # y sticky
     Γ0[eq[:eq_Ey], endo[:y_t]]  = 1
     Γ1[eq[:eq_Ey], endo[:Ey_t]] = 1
-    Π[eq[:eq_Ey, ex[:Ey_sh]]    = 1
+    Π[eq[:eq_Ey], ex[:Ey_sh]]    = 1
 
     # y flexible
     Γ0[eq[:eq_Ey_f], endo[:y_f_t]]  = 1

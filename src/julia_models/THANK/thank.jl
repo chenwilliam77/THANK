@@ -132,7 +132,7 @@ function init_model_indices!(m::THANK)
                          :t_h_f_t, :Ey_f_t, :Eλ_h_f_t, :Eλ_s_f_t]
 
     # Exogenous shocks
-    exogenous_shocks = [:mp_sh, :z_sh, :g_sh, :μ_sh, :λ_p_sh, :λ_w_sh, :b_sh]
+    exogenous_shocks = [:R_sh, :z_sh, :g_sh, :μ_sh, :λ_p_sh, :λ_w_sh, :b_sh]
 
     # Expectations shocks
     expected_shocks = [:Eπ_sh, :Ec_sh, :Eλ_sh, :Eϕ_sh, :ERk_sh, :Ei_sh, :Ew_sh, # sticky prices
@@ -234,12 +234,12 @@ those).
 """
 function init_parameters!(m::THANK)
     # Calibrated parameters
+    m <= parameter(:gy_ss, 0.2, fixed=true,
+                   description="g_ss_ratio: steady state government spending to GDP ratio.",
+                   tex_label = "g^{ss}" )
     m <= parameter(:δ, 0.025, fixed=true,
                    description="δ: The capital depreciation rate.",
                    tex_label = "\\delta" )
-    m <= parameter(:g_ss_ratio, 0.2, fixed=true,
-                   description="g_ss_ratio: steady state government spending to GDP ratio.",
-                   tex_label = "g^{ss}" )
     m <= parameter(:t_h_0_L_ss, 0.0, fixed=true,
                    description="New parameter! Might estimate", # FIX THIS DESCRIPTION
                    tex_label = "g^{ss}" )
@@ -259,7 +259,7 @@ function init_parameters!(m::THANK)
                    tex_label = "\\iota_w")
 
     m <= parameter(:γ100, 0.53, (-5.0, 5.0), (-5., 5.), ModelConstructors.Untransformed(), Normal(0.5, 0.025), fixed = false,
-                   #scaling = x -> x/100,
+
                    description="γ: The log of the steady-state growth rate of technology.",
                    tex_label = "100\\gamma")
 
@@ -280,12 +280,11 @@ function init_parameters!(m::THANK)
                    tex_label = "\\log(L)^{ss}")
 
     m <= parameter(:π_ss100, 0.75, (1e-5, 10.), (1e-5, 10.), ModelConstructors.Exponential(), Normal(0.5, 0.1), fixed = false,
-                   scaling = x -> 1 + x / 100,
+
                    description="π_ss100: The steady-state rate of net inflation multiplied by 100.",
                    tex_label = "100 \\pi^{ss}")
 
     m <= parameter(:Fβ, 0.1, (1e-5, 10.), (1e-5, 10.), ModelConstructors.Exponential(), Gamma(0.25, 0.1), fixed=false,
-                   scaling = x -> 1/(1 + x/100),
                    description = "Fβ: Discount rate transformed.",
                    tex_label = "100(\\beta^{-1} - 1)")
 
@@ -325,49 +324,49 @@ function init_parameters!(m::THANK)
                    description="ψ₃: Weight on rate of change of output gap in the monetary policy rule.",
                    tex_label = "\\psi_3")
 
-    m <= parameter(:η_λ_p, 0.8, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.50, 0.20), fixed = false,
+    m <= parameter(:η_λ_p, 0.75, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.50, 0.20), fixed = false,
                    description="η_λ_p: Moving average component in the price markup shock.",
                    tex_label = "\\eta_{\\lambda_p}")
 
-    m <= parameter(:η_λ_w, 0.25, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.50, 0.20), fixed = false,
+    m <= parameter(:η_λ_w, 0.95, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.50, 0.20), fixed = false,
                    description="η_λ_w: Moving average component in the wage markup shock.",
                    tex_label = "\\eta_{\\lambda_w}")
 
     # exogenous processes - autocorrelation
-    m <= parameter(:ρ_R, 0.98, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
+    m <= parameter(:ρ_R, 0.8, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_R: persistence in the monetary policy rule.",
                    tex_label = "\\rho_{R}")
 
-    m <= parameter(:ρ_z, 0.7, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
+    m <= parameter(:ρ_z, 0.25, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_z: AR(1) coefficient in the technology process.",
                    tex_label = "\\rho_{z}")
 
-    m <= parameter(:ρ_g, 0.95, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
+    m <= parameter(:ρ_g, 0.98, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_g: AR(1) coefficient in the government spending process.",
                    tex_label = "\\rho_g")
 
-    m <= parameter(:ρ_μ, 0.98, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
+    m <= parameter(:ρ_μ, 0.7, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_μ: AR(1) coefficient in capital adjustment cost process.",
                    tex_label = "\\rho_{\\mu}")
 
-    m <= parameter(:ρ_λ_p, 0.7, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
+    m <= parameter(:ρ_λ_p, 0.95, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_λ_p: AR(1) coefficient in the price mark-up shock process.",
                    tex_label = "\\rho_{\\lambda_p}")
 
-    m <= parameter(:ρ_λ_w, 0.15, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
+    m <= parameter(:ρ_λ_w, 0.98, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_λ_w: AR(1) coefficient in the wage mark-up shock process.",
                    tex_label = "\\rho_{\\lambda_w}")
 
-    m <= parameter(:ρ_b, 0.75, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
+    m <= parameter(:ρ_b, 0.7, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_b: AR(1) coefficient in the intertemporal preference shifter process.",
                    tex_label = "\\rho_b")
 
-    m <= parameter(:ρ_mp, 0.95, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.4, 0.2), fixed = false,
+    m <= parameter(:ρ_mp, 0.15, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.4, 0.2), fixed = false,
                    description="ρ_mp: AR(1) coefficient in the monetary policy shock process.",
                    tex_label = "\\rho_{mp}")
 
     # exogenous processes - standard deviation
-    m <= parameter(:σ_mp, 0.2, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(2, 0.10), fixed = false,
+    m <= parameter(:σ_R, 0.2, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(2, 0.10), fixed = false,
                    description="σ_mp: The standard deviation of the monetary policy shock.",
                    tex_label = "\\sigma_{mp}")
 
@@ -395,30 +394,43 @@ function init_parameters!(m::THANK)
                    description="σ_b: The standard deviation of the intertemporal preference shifter process.",
                    tex_label = "\\sigma_{b}")
     # new parameters
-    m <= parameter(:θ,
-    m <= parameter(:σ
-    m <= parameter(:σ′
-    m <= parameter(:τ_D
-    m <= paramter(:τ_k
+    m <= parameter(:θ, 0.25, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
+    m <= parameter(:σ, 0.98, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
+    m <= parameter(:σ′, 0.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
+    m <= parameter(:τ_d, 0.1, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
+    m <= parameter(:τ_k, 0.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
     # steady states
     m <= SteadyStateParameter(:γ, NaN, tex_label = "\\gamma")
+    m <= SteadyStateParameter(:expγ, NaN, tex_label = "")
     m <= SteadyStateParameter(:β, NaN, tex_label = "\\beta")
     m <= SteadyStateParameter(:r_ss, NaN, tex_label = "r^{ss}")
     m <= SteadyStateParameter(:r_ss100, NaN, tex_label = "100 r^{ss}")
-    m <= SteadyStateParameter(:π_ss, NaN, tex_label = "\\pi^{ss}")
-    m <= SteadyStateParameter(:g_ss, NaN, tex_label = "G^{ss}")
     m <= SteadyStateParameter(:expL_ss, NaN, tex_label = "L^{ss}")
     m <= SteadyStateParameter(:Rk_ss, NaN, description = "Steady-state short-term rate of return on capital.", tex_label = "R^{k, ss}")
-    m <= SteadyStateParameter(:s_ss, NaN, description = "Steady-state marginal cost", tex_label = "s^{ss}")
+    m <= SteadyStateParameter(:mc_ss, NaN, description = "Steady-state marginal cost", tex_label = "s^{ss}")
+    m <= SteadyStateParameter(:w_ss, NaN, tex_label = "w^{ss}")
     m <= SteadyStateParameter(:kL_ss, NaN, tex_label = "k^{ss}/L^{ss}")
     m <= SteadyStateParameter(:FL_ss, NaN, description = "Steady-state ratio of fixed costs to labor", tex_label = "F^{ss}/L^{ss}")
     m <= SteadyStateParameter(:yL_ss, NaN, description = "Steady-state ratio of output to labor", tex_label = "y^{ss}/L^{ss}")
+    m <= SteadyStateParameter(:gL_ss, NaN, tex_label = "k^{ss}")
+    m <= SteadyStateParameter(:i_s_L_ss, NaN, tex_label = "k^{ss}")
+    m <= SteadyStateParameter(:cL_ss, NaN, tex_label = "k^{ss}")
+    m <= SteadyStateParameter(:c_h_L_ss, NaN, tex_label = "k^{ss}")
+    m <= SteadyStateParameter(:c_s_L_ss, NaN, tex_label = "k^{ss}")
+    m <= SteadyStateParameter(:λ_h_L_ss, NaN, tex_label = "k^{ss}")
+    m <= SteadyStateParameter(:λ_s_L_ss, NaN, tex_label = "k^{ss}")
     m <= SteadyStateParameter(:k_ss, NaN, tex_label = "k^{ss}")
-    m <= SteadyStateParameter(:i_ss, NaN, tex_label = "i^{ss}")
     m <= SteadyStateParameter(:F_ss, NaN, tex_label = "F^{ss}")
     m <= SteadyStateParameter(:y_ss, NaN, tex_label = "y^{ss}")
     m <= SteadyStateParameter(:c_ss, NaN, tex_label = "c^{ss}")
-    m <= SteadyStateParameter(:w_ss, NaN, tex_label = "w^{ss}")
+
+    # new equations
+    m <= SteadyStateParameter(:c_h_ss, NaN, tex_label = "k^{ss}")
+    m <= SteadyStateParameter(:c_s_ss, NaN, tex_label = "")
+    m <= SteadyStateParameter(:i_s_ss, NaN, tex_label = "k^{ss}")
+    m <= SteadyStateParameter(:λ_h_ss, NaN, tex_label = "k^{ss}")
+    m <= SteadyStateParameter(:λ_s_ss, NaN, tex_label = "k^{ss}")
+    m <= SteadyStateParameter(:λ_ss, NaN, tex_label = "k^{ss}")
 end
 
 """
@@ -432,30 +444,32 @@ the parameters of `m` are updated.
 function steadystate!(m::THANK)
 
     m[:γ]        = m[:γ100] / 100.
+    m[:expγ]     = exp(m[:γ])
     m[:β]        = 100. / (m[:Fβ] + 100.)
     m[:r_ss]     = exp(m[:γ]) / m[:β] - 1.
+
     m[:r_ss100]  = 100. * m[:r_ss]
-    m[:π_ss]     = m[:π_ss100] / 100.
-    m[:g_ss]     = 1. / (1. - m[:g_ss_ratio])
     m[:expL_ss]  = exp(m[:L_ss])
     m[:Rk_ss]    = exp(m[:γ]) / m[:β] - 1. + m[:δ]
     m[:mc_ss]    = 1. / (1. + m[:λ_p_ss])
+
     m[:w_ss]     = (m[:mc_ss] * ((1. - m[:α]) ^ (1. - m[:α])) / ((m[:α] ^ (-m[:α])) * m[:Rk_ss] ^ m[:α])) ^ (1. / (1. - m[:α]))
-    m[:kL_ss]    = (m[:w_ss] / m[:Rk_ss]) ^ (m[:α] / (1. - m[:α]))
+
+    m[:kL_ss]    = (m[:w_ss] / m[:Rk_ss]) * (m[:α] / (1. - m[:α]))
     m[:FL_ss]    = m[:kL_ss] ^ m[:α] - m[:Rk_ss] * m[:kL_ss] - m[:w_ss]
     m[:yL_ss]    = m[:kL_ss] ^ m[:α] - m[:FL_ss]
-    m[:gL_ss]    = m[:kL_ss] * m[:yL_ss]
-    m[:i_s_L_ss] = (1 - (1 - m[:δ]) * exp(-m[:γ]) * exp(m[:γ]) * m[:kL_ss] / (1 - m[:θ]) # check in on this later
+    m[:gL_ss]    = m[:gy_ss] * m[:yL_ss]
+    m[:i_s_L_ss] = (1 - (1 - m[:δ]) * exp(-m[:γ])) * exp(m[:γ]) * m[:kL_ss] / (1 - m[:θ]) # check in on this later
     m[:cL_ss]    = m[:yL_ss] - (1 - m[:θ]) * m[:i_s_L_ss] - m[:gL_ss]
     m[:c_h_L_ss] = m[:w_ss] + m[:t_h_0_L_ss] + m[:τ_k] * m[:Rk_ss] * m[:kL_ss] / m[:θ] - m[:gL_ss]
-    m[:c_s_L_ss] = (1 / (1 - m[:θ])) * m[:cL_ss] - (m[:θ] / (1 - m[:θ]) * m[:c_h_L_ss]
+    m[:c_s_L_ss] = (1 / (1 - m[:θ])) * m[:cL_ss] - (m[:θ]) / (1 - m[:θ]) * m[:c_h_L_ss]
     m[:λ_h_L_ss] = exp(m[:γ]) / (exp(m[:γ]) * m[:c_h_L_ss] - m[:h] * m[:cL_ss])
     m[:λ_s_L_ss] = exp(m[:γ]) / (exp(m[:γ]) * m[:c_s_L_ss] - m[:h] * m[:cL_ss])
     m[:k_ss]     = m[:kL_ss] * m[:expL_ss]
-    m[:i_ss]     = (1. - (1. - m[:δ]) * exp(-m[:γ])) * m[:k_ss] * exp(m[:γ])
+
     m[:F_ss]     = m[:FL_ss] * m[:expL_ss]
     m[:y_ss]     = m[:yL_ss] * m[:expL_ss]
-    m[:c_ss]     = m[:y_ss] / m[:g_ss] -  m[:i_ss]
+    m[:c_ss]     = m[:cL_ss] * m[:expL_ss]
 
     # New equations
     m[:c_h_ss]   = m[:c_h_L_ss] * exp(m[:L_ss])

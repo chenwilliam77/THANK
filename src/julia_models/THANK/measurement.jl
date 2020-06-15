@@ -1,6 +1,6 @@
 """
 ```
-measurement(m::JPT{T}, TTT::Matrix{T}, RRR::Matrix{T},
+measurement(m::THANK{T}, TTT::Matrix{T}, RRR::Matrix{T},
             CCC::Vector{T}) where {T<:AbstractFloat}
 ```
 
@@ -18,7 +18,7 @@ Var(u_t) = EE
 Cov(ϵ_t, u_t) = 0
 ```
 """
-function measurement(m::JPT{T},
+function measurement(m::THANK{T},
                      TTT::Matrix{T},
                      RRR::Matrix{T},
                      CCC::Vector{T}) where {T<:AbstractFloat}
