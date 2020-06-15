@@ -38,19 +38,19 @@ function measurement(m::THANK{T},
 
     ## Output growth - Quarterly!
     ZZ[obs[:obs_gdp], endo[:gdp_t]]       = 1.0
-    ZZ[obs[:obs_gdp], endo_addl[:gdp_t1]] = -1.0
+    ZZ[obs[:obs_gdp], endo[:gdp_t1]] = -1.0
     ZZ[obs[:obs_gdp], endo[:z_t]]         = 1.0
     DD[obs[:obs_gdp]]                     = m[:γ100]
 
     ## Consumption Growth
     ZZ[obs[:obs_consumption], endo[:c_t]]       = 1.0
-    ZZ[obs[:obs_consumption], endo_addl[:c_t1]] = -1.0
+    ZZ[obs[:obs_consumption], endo[:c_t1]] = -1.0
     ZZ[obs[:obs_consumption], endo[:z_t]]       = 1.0
     DD[obs[:obs_consumption]]                   = m[:γ100]
 
     ## Investment Growth
     ZZ[obs[:obs_investment], endo[:i_t]]       = 1.0
-    ZZ[obs[:obs_investment], endo_addl[:i_t1]] = -1.0
+    ZZ[obs[:obs_investment], endo[:i_t1]] = -1.0
     ZZ[obs[:obs_investment], endo[:z_t]]       = 1.0
     DD[obs[:obs_investment]]                   = m[:γ100]
 
@@ -60,7 +60,7 @@ function measurement(m::THANK{T},
 
     ## Real wage growth
     ZZ[obs[:obs_wages], endo[:w_t]]       = 1.0
-    ZZ[obs[:obs_wages], endo_addl[:w_t1]] = -1.0
+    ZZ[obs[:obs_wages], endo[:w_t1]] = -1.0
     ZZ[obs[:obs_wages], endo[:z_t]]       = 1.0
     DD[obs[:obs_wages]]                   = m[:γ100]
 
@@ -69,11 +69,11 @@ function measurement(m::THANK{T},
     DD[obs[:obs_gdpdeflator]]             = m[:π_ss100]
 
     ## Nominal interest rate
-    ZZ[obs[:obs_nominalrate], endo[:mp_t]] = 1.0
+    ZZ[obs[:obs_nominalrate], endo[:R_t]] = 1.0
     DD[obs[:obs_nominalrate]]             = m[:π_ss100] + m[:r_ss100]
 
     # Variance of innovations
-    QQ[exo[:mp_sh], exo[:mp_sh]]         = m[:σ_mp]^2
+    QQ[exo[:R_sh], exo[:R_sh]]         = m[:σ_R]^2
     QQ[exo[:z_sh], exo[:z_sh]]           = m[:σ_z]^2
     QQ[exo[:g_sh], exo[:g_sh]]           = m[:σ_g]^2
     QQ[exo[:μ_sh], exo[:μ_sh]]           = m[:σ_μ]^2
