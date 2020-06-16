@@ -67,7 +67,7 @@ c_s0  = c / (1 - θ)
 bR0   = (g - t + τ) / (1 - (1.025 / 4) / exp(γ) / π_ss)
 R0    = (1.025 / 4)
 
-function distSS(x)
+function distSS!(x)
 global w1, w2, H1, H2, th1, th2, τ_h1, τ_h2, c, g, t, τ
 global s, θ, f_h1, f_s1, γ, π_ss, h, disc
 
@@ -98,8 +98,9 @@ return r
 
 end
 
+
 init = [c_h10 c_h20 c_s0 λ_h10 λ_h20 λ_s0 bR0 R0]
-ss = nlsolve(distSS, init)
+ss = nlsolve(distSS, init, autodiff = :forward)
 
 solution = ss.zero
 
