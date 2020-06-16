@@ -27,6 +27,25 @@ function eqcond(m::THANK)
 
     ### ENDOGENOUS STATES ###
 
+    Γ0 sₜ = Γ1 sₜ₋₁ + C + Ψ ϵ + Π η
+
+    ### 1. Intermediate goods producers
+    Γ0[eq[:eq_klR1], endo[:klR1_t]] = -1.
+    Γ0[eq[:eq_klR1], endo[:w1_t]]   = 1.
+    Γ0[eq[:eq_klR1], endo[:ρ_t]]    = -1.
+
+    ### Final goods producers
+    Γ0[eq[:eq_finalgood], endo[:y_t]] = -1.
+    Γ0[eq[:eq_finalgood], endo[:y1_t]] = m[:v]
+    Γ0[eq[:eq_finalgood], endo[:y2_t]] = (1 - m[:v])
+    Γ0[eq[:eq_finalgood], endo[:d_t]] = -(1 - m[:v]) / (1 - m[:ζ])
+
+    Γ0[eq[:eq_finalgood_inflation], endo[:π_t]] = -1.
+    Γ0[eq[:eq_finalgood_inflation], endo[:d_t]] = (1 - m[:v]) / (1 - m[:ζ])
+    Γ0[eq[:eq_finalgood], endo[:π1_t]] = m[:v]
+    Γ0[eq[:eq_finalgood], endo[:π2_t]] = (1 - m[:v])
+    Γ1[eq[:eq_finalgood], endo[:d_t]] = (1 - m[:v]) / (1 - m[:ζ])
+
     ### 1. Production function
 
     # Sticky prices
