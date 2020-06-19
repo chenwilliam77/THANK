@@ -6,10 +6,9 @@ import DSGE: eqcond, measurement, init_observable_mappings!, init_pseudo_observa
 include("util.jl")
 
 # julia_models/THANK
-include("julia_models/THANK/thank.jl")
-#include("julia_models/THANK/augment_states.jl")
-include("julia_models/THANK/eqcond.jl")
-include("julia_models/THANK/measurement.jl")
-include("julia_models/THANK/observables.jl")
-include("julia_models/THANK/subspecs.jl")
-include("julia_models/THANK/augment_states.jl")
+include("julia_models/COVIDHANK/covidhank.jl")
+include("julia_models/COVIDHANK/eqcond.jl")
+include("julia_models/COVIDHANK/measurement.jl")
+include("julia_models/COVIDHANK/observables.jl")
+include("julia_models/COVIDHANK/subspecs.jl")
+include("julia_models/COVIDHANK/augment_states.jl")

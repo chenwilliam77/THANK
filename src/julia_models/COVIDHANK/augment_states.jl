@@ -41,6 +41,6 @@ The diagram below shows how `TTT` is extended to `TTT_aug`.
     |_________________________________|
 
 """
-function augment_states(m::THANK, TTT::Matrix{T}, RRR::Matrix{T}, CCC::Vector{T}) where {T <: Real}
+function augment_states(m::COTHANK, TTT::Matrix{T}, RRR::Matrix{T}, CCC::Vector{T}) where {T <: Real}
     return TTT, RRR, CCC
 end
