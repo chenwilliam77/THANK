@@ -360,19 +360,19 @@ function eqcond(m::COTHANK)
     Γ1[eq[:eq_wage_phillips_good2], endo[:π_t]]    = -m[:ι_w] / (1. + m[:β])
     Γ1[eq[:eq_wage_phillips_good2], endo[:z_t]]    = -m[:ι_w] / (1. + m[:β])
 
-    Γ0[eq[:eq_marg_sub_good2], endo[:g_w2_t]] = 1
-    Γ0[eq[:eq_marg_sub_good2], endo[:w2_t]] = -1
-    Γ0[eq[:eq_marg_sub_good2], endo[:L2_t]] = m[:ν]
-    Γ0[eq[:eq_marg_sub_good2], endo[:b_t]] = 1
-    Γ0[eq[:eq_marg_sub_good2], endo[:λ_SH2_t]] = -1
+    Γ0[eq[:eq_marg_sub_good2], endo[:g_w2_t]]  = 1.
+    Γ0[eq[:eq_marg_sub_good2], endo[:w2_t]]    = -1.
+    Γ0[eq[:eq_marg_sub_good2], endo[:L2_t]]    = m[:ν]
+    Γ0[eq[:eq_marg_sub_good2], endo[:b_t]]     = 1.
+    Γ0[eq[:eq_marg_sub_good2], endo[:λ_SH2_t]] = -1.
 
-    Γ0[eq[:eq_avg_marg_util_SH2], endo[:λ_SH2_t]] = -1
-    Γ0[eq[:eq_avg_marg_util_SH2], endo[:λ_S_t]]   = (1 - m[:θ]) * (1 - m[:f_S1]) / ((1 - m[:θ]) *
-                                                    (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) *
+    Γ0[eq[:eq_avg_marg_util_SH2], endo[:λ_SH2_t]] = -1.
+    Γ0[eq[:eq_avg_marg_util_SH2], endo[:λ_S_t]]   = (1. - m[:θ]) * (1. - m[:f_S1]) / ((1. - m[:θ]) *
+                                                    (1. - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) *
                                                     m[:λ_S_ss] / m[:λ_SH2_ss]
-    Γ0[eq[:eq_avg_marg_util_SH2], endo[:λ_H2_t]] = m[:θ] * (1 - m[:f_H1]) / ((1 - m[:θ]) *
-                                                   (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) *
-                                                   m[:λ_H2_ss] / m[:λ_SH2_ss]
+    Γ0[eq[:eq_avg_marg_util_SH2], endo[:λ_H2_t]]  = m[:θ] * (1. - m[:f_H1]) / ((1. - m[:θ]) *
+                                                    (1. - m[:f_S1]) + m[:θ] * (1. - m[:f_H1])) *
+                                                    m[:λ_H2_ss] / m[:λ_SH2_ss]
 
     ### 8. Monetary and fiscal policy
     Γ0[eq[:eq_mp], endo[:R_t]]    = -1.
