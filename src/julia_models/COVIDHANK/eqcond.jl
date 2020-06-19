@@ -322,7 +322,7 @@ function eqcond(m::COTHANK)
     Γ1[eq[:eq_k_S_f], endo[:k_S_f_t]] = (1 - m[:δ]) * exp(-m[:γ])
 =#
     ### 7. Wage Phillips Curve
-# wage phillips curve, marg sub evolution, average marginal utility labor
+
     # Sticky prices
     κ_w = (1. - m[:ξ_w] * m[:β]) * (1. - m[:ξ_w]) / (m[:ξ_w] * (1. + m[:β]) * (1. +
               m[:ν] * (1. + 1. / m[:λ_w_ss])))
