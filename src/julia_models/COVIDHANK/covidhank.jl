@@ -1,4 +1,3 @@
-
 """
 ```
 COTHANK{T} <: AbstractRepModel{T}
