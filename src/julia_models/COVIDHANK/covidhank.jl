@@ -468,13 +468,13 @@ function init_parameters!(m::COTHANK)
     # m <= parameter(:f_H, 1/4, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
     m <= parameter(:f_H1, 1/4, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
     m <= parameter(:f_S1, 3/4, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
-    m <= parameter(:H1, 1.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
-    m <= parameter(:H2, 0.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
-    m <= parameter(:A2, 0.7, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
-    m <= parameter(:s, 0.995, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
+    m <= parameter(:H1, 1.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from steady state
+    m <= parameter(:H2, 0.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from steady state
+    m <= parameter(:A2, 0.7, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from steady state
+    m <= parameter(:s, 0.995, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from steady state
     m <= parameter(:g_x, 0.18, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
-    m <= parameter(:s_x, 0.18, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
-    m <= parameter(:sx, 0.18, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
+    m <= parameter(:s_x, 0.18, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # ???
+    m <= parameter(:sx, 0.18, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # ???
 
 
     # steady states
@@ -548,52 +548,52 @@ function steadystate!(m::COTHANK)
     m[:ψ_H1]     = m[:θ] * m[:f_H1] / 1.1
     m[:ψ_H2]     = m[:θ] * (1 - m[:f_H1]) / 1.1
 
-    m[:L1]   = ((1-m[:θ]) * m[:f_S1] + m[:θ] * m[:f_H1]) * m[:H1]
-    m[:L2]   = ((1-m[:θ]) * (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) *m[:H2]
+    m[:L1]   = ((1-m[:θ]) * m[:f_S1] + m[:θ] * m[:f_H1]) * m[:H1] # from steady state
+    m[:L2]   = ((1-m[:θ]) * (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) *m[:H2] # from steady state
 
-    m[:ρ_ss]    = exp(m[:γ]) / m[:β] - (1 - m[:δ])
+    m[:ρ_ss]    = exp(m[:γ]) / m[:β] - (1 - m[:δ]) # from steady state
 
-    m[:w1_ss]   = (m[:α] ^ m[:α] * (1 - m[:α]) ^ (1 - m[:α]) / (1 + m[:λ_p_ss]) / (m[:ρ_ss] ^ m[:α])) ^ (1 / (1 - m[:α]))
-    m[:w2_ss]   = m[:A2] * m[:w1_ss]
+    m[:w1_ss]   = (m[:α] ^ m[:α] * (1 - m[:α]) ^ (1 - m[:α]) / (1 + m[:λ_p_ss]) / (m[:ρ_ss] ^ m[:α])) ^ (1 / (1 - m[:α])) # from steady state
+    m[:w2_ss]   = m[:A2] * m[:w1_ss] # from steady state
 
-    m[:klR1_ss] = m[:w1_ss] / m[:ρ_ss] * m[:α] / (1 - m[:α])
-    m[:klR2_ss] = m[:A2] * m[:klR1_ss]
-    m[:k_ss]    = m[:klR1_ss] * m[:L1]
+    m[:klR1_ss] = m[:w1_ss] / m[:ρ_ss] * m[:α] / (1 - m[:α]) # from steady state
+    m[:klR2_ss] = m[:A2] * m[:klR1_ss] # from steady state
+    m[:k_ss]    = m[:klR1_ss] * m[:L1] # from steady state
 
-    m[:F1_ss]   = m[:λ_p_ss] / (1 + m[:λ_p_ss]) * m[:L1] * m[:klR1_ss] ^ m[:α]
-    m[:y1_ss]   = m[:L1] * m[:klR1_ss] ^ m[:α] - m[:F1_ss]
-    m[:y_ss]    = m[:y1_ss] /m[:ν]
-    m[:y2_ss]   = (1 - m[:ν]) * m[:y_ss]
-    m[:F2_ss]   = m[:λ_p_ss] * m[:y2_ss] / m[:A2]
-    m[:x_ss]    = m[:y_ss]
+    m[:F1_ss]   = m[:λ_p_ss] / (1 + m[:λ_p_ss]) * m[:L1] * m[:klR1_ss] ^ m[:α] # from steady state
+    m[:y1_ss]   = m[:L1] * m[:klR1_ss] ^ m[:α] - m[:F1_ss] # from steady state
+    m[:y_ss]    = m[:y1_ss] /m[:ν] # from steady state
+    m[:y2_ss]   = (1 - m[:ν]) * m[:y_ss] # from steady state
+    m[:F2_ss]   = m[:λ_p_ss] * m[:y2_ss] / m[:A2] # from steady state
+    m[:x_ss]    = m[:y_ss] # from steady state
 
-    m[:i_S_ss]   = (1 - (1 - m[:δ]) * exp(-m[:γ])) * exp(m[:γ]) * m[:k_ss] / (1 - m[:θ])
-    m[:g_ss]    = m[:g_x] * m[:x_ss]
-    m[:c_ss]    = m[:y_ss] - m[:g_ss] - (1 - m[:θ]) * m[:i_S_ss]
+    m[:i_S_ss]   = (1 - (1 - m[:δ]) * exp(-m[:γ])) * exp(m[:γ]) * m[:k_ss] / (1 - m[:θ]) # from steady state
+    m[:g_ss]    = m[:g_x] * m[:x_ss] # from steady state
+    m[:c_ss]    = m[:y_ss] - m[:g_ss] - (1 - m[:θ]) * m[:i_S_ss] # from steady state
 
-    m[:τ_ss]    = m[:τ_x] * m[:x_ss]
-    m[:τ_H1_ss] = m[:τ_ss] * m[:ψ_H1] / m[:θ] / (1 - m[:f_H1])
-    m[:τ_H2_ss] = m[:τ_ss] *m[:ψ_H2] / m[:θ] / (1 - m[:f_H1])
-    m[:τ_s_ss]  = m[:τ_ss] - m[:θ] * (m[:f_H1] * m[:τ_H1_ss] + (1 - m[:f_H1]) * m[:τ_H2_ss])
+    m[:τ_ss]    = m[:τ_x] * m[:x_ss] # from steady state
+    m[:τ_H1_ss] = m[:τ_ss] * m[:ψ_H1] / m[:θ] / (1 - m[:f_H1]) # from steady state
+    m[:τ_H2_ss] = m[:τ_ss] *m[:ψ_H2] / m[:θ] / (1 - m[:f_H1]) # from steady state
+    m[:τ_s_ss]  = m[:τ_ss] - m[:θ] * (m[:f_H1] * m[:τ_H1_ss] + (1 - m[:f_H1]) * m[:τ_H2_ss]) # from steady state
 
-    m[:t_ss]    = m[:t_x] * m[:x_ss]
-    m[:t_H1_ss] = m[:t_ss] * m[:ψ_H1] / m[:θ] / m[:f_H1]
-    m[:t_H2_ss] = m[:t_ss] * m[:ψ_H2] / m[:θ] / (1 - m[:f_H1])
-    m[:t_S_ss]  = (m[:t_ss] - m[:θ] * ( m[:f_H1] * m[:t_H1_ss] + (1 - m[:f_H1]) * m[:t_H2_ss])) / (1 - m[:θ])
+    m[:t_ss]    = m[:t_x] * m[:x_ss] # from steady state
+    m[:t_H1_ss] = m[:t_ss] * m[:ψ_H1] / m[:θ] / m[:f_H1] # from steady state
+    m[:t_H2_ss] = m[:t_ss] * m[:ψ_H2] / m[:θ] / (1 - m[:f_H1]) # from steady state
+    m[:t_S_ss]  = (m[:t_ss] - m[:θ] * ( m[:f_H1] * m[:t_H1_ss] + (1 - m[:f_H1]) * m[:t_H2_ss])) / (1 - m[:θ]) # from steady state
 
-    m[:c_H1_ss] = m[:c_ss] / m[:θ] / m[:f_H1]
-    m[:c_H2_ss] = m[:c_ss] / m[:θ] / (1 - m[:f_H1])
-    m[:c_S_ss]  = m[:c_ss] / (1 - m[:θ])
-    m[:λ_H1_ss] = exp(m[:γ]) / (exp(m[:γ]) * m[:c_H1_ss] - m[:h] * m[:c_ss])
-    m[:λ_H2_ss] = exp(m[:γ]) / (exp(m[:γ]) * m[:c_H2_ss] - m[:h] * m[:c_ss])
-    m[:λ_S_ss]  = exp(m[:γ]) / (exp(m[:γ]) *m[:c_S_ss] - m[:h] * m[:c_ss])
-    m[:bᴿ_ss]   = (m[:g_ss] - m[:t_ss] + m[:τ_ss]) / (1 - (1.025 / 4) / exp(m[:γ]) / m[:π_ss])
+    m[:c_H1_ss] = m[:c_ss] / m[:θ] / m[:f_H1] # from steady state
+    m[:c_H2_ss] = m[:c_ss] / m[:θ] / (1 - m[:f_H1]) # from steady state
+    m[:c_S_ss]  = m[:c_ss] / (1 - m[:θ]) # from steady state
+    m[:λ_H1_ss] = exp(m[:γ]) / (exp(m[:γ]) * m[:c_H1_ss] - m[:h] * m[:c_ss]) # from steady state
+    m[:λ_H2_ss] = exp(m[:γ]) / (exp(m[:γ]) * m[:c_H2_ss] - m[:h] * m[:c_ss]) # from steady state
+    m[:λ_S_ss]  = exp(m[:γ]) / (exp(m[:γ]) *m[:c_S_ss] - m[:h] * m[:c_ss]) # from steady state
+    m[:bᴿ_ss]   = (m[:g_ss] - m[:t_ss] + m[:τ_ss]) / (1 - (1.025 / 4) / exp(m[:γ]) / m[:π_ss]) # from steady state
     m[:λ_SH1_ss]= (1 - m[:θ]) * m[:f_S1] / ((1 - m[:θ]) * m[:f_S1] + m[:θ] * m[:f_H1]) * m[:λ_S_ss] +
-                       m[:θ] * m[:f_H1] / ((1 - m[:θ]) * m[:f_S1] + m[:θ] * m[:f_H1]) * m[:λ_H1_ss]
+                       m[:θ] * m[:f_H1] / ((1 - m[:θ]) * m[:f_S1] + m[:θ] * m[:f_H1]) * m[:λ_H1_ss] # ask will
     m[:λ_SH1_ss]= (1 - m[:θ]) * (1 - m[:f_S1]) / ((1 - m[:θ]) * (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) * m[:λ_S_ss] +
-                       m[:θ] * (1 - m[:f_H1]) / ((1 - m[:θ]) * (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) * m[:λ_H2_ss]
+                       m[:θ] * (1 - m[:f_H1]) / ((1 - m[:θ]) * (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) * m[:λ_H2_ss] # ask will
     m[:R_ss]    = (1.025 / 4)
-    m[:mc1_ss]  = m[:α] * m[:ρ_ss] + (1 - m[:α]) * m[:w1_ss]
+    m[:mc1_ss]  = m[:α] * m[:ρ_ss] + (1 - m[:α]) * m[:w1_ss] # JPT?
     m[:mc2_ss]  = m[:α] * m[:ρ_ss] + (1 - m[:α]) * (m[:w2_ss]) # a??
 
     return m
