@@ -97,6 +97,21 @@ function eqcond(m::COTHANK)
     Γ0[eq[:eq_price_index], endo[:π2_t]] = (1. - m[:ν])
     Γ1[eq[:eq_price_index], endo[:d_t]] = (1. - m[:ν]) / (1. - m[:ζ])
 
+    Γ0[eq[:eq_demanda_good1], endo[:y1_t]] = 1
+    Γ0[eq[:eq_demanda_good1], endo[:π1_t]] = m[:ζ]
+    Γ0[eq[:eq_demanda_good1], endo[:y_t]] = -1
+    Γ1[eq[:eq_demanda_good1], endo[:y1_t]] = 1
+    Γ1[eq[:eq_demanda_good1], endo[:y_t]] = -1
+
+    Γ0[eq[:eq_demanda_good2], endo[:y2_t]] = 1
+    Γ0[eq[:eq_demanda_good2], endo[:d_t]] = -1
+    Γ0[eq[:eq_demanda_good2], endo[:π2_t]] = m[:ζ]
+    Γ0[eq[:eq_demanda_good2], endo[:y_t]] = -1
+    Γ1[eq[:eq_demanda_good2], endo[:y2_t]] = 1
+    Γ1[eq[:eq_demanda_good2], endo[:d_t]] = -1
+    Γ1[eq[:eq_demanda_good2], endo[:y_t]] = -1
+
+
     ### 4. Price Phillips Curve
 
     # Sticky prices
