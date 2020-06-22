@@ -539,65 +539,71 @@ the parameters of `m` are updated.
 """
 function steadystate!(m::COTHANK)
 
+    # These steady state values are "un-normalizing" parameters, e.g. turn steady state technology growth
+    # from percentage points to their actual value (γ100 -> γ)
     m[:γ]        = m[:γ100] / 100.
     m[:expγ]     = exp(m[:γ])
     m[:β]        = 100. / (m[:Fβ] + 100.)
     m[:π_ss]     = m[:π_ss100] / 100.
     m[:π_S_ss]   = m[:π_S_ss100] / 100.
     m[:r_ss]     = exp(m[:γ]) / m[:β] - 1.
-    m[:ψ_H1]     = m[:θ] * m[:f_H1] / 1.1
-    m[:ψ_H2]     = m[:θ] * (1 - m[:f_H1]) / 1.1
 
-    m[:L1]   = ((1-m[:θ]) * m[:f_S1] + m[:θ] * m[:f_H1]) * m[:H1] # from steady state
-    m[:L2]   = ((1-m[:θ]) * (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) *m[:H2] # from steady state
+    # Lines 553-595 are taken from Giorgio's MATLAB script for solving steady state, steady states that we
+    # are unsure about are in lines 598-604
+    m[:ψ_H1]     = m[:θ] * m[:f_H1] / 1.1 # from Giorgio's MATLAB script for solving steady state
+    m[:ψ_H2]     = m[:θ] * (1 - m[:f_H1]) / 1.1 # from Giorgio's MATLAB script for solving steady state
 
-    m[:ρ_ss]    = exp(m[:γ]) / m[:β] - (1 - m[:δ]) # from steady state
+    m[:L1]   = ((1-m[:θ]) * m[:f_S1] + m[:θ] * m[:f_H1]) * m[:H1] # from Giorgio's MATLAB script for solving steady state
+    m[:L2]   = ((1-m[:θ]) * (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) *m[:H2] # from Giorgio's MATLAB script for solving steady state
 
-    m[:w1_ss]   = (m[:α] ^ m[:α] * (1 - m[:α]) ^ (1 - m[:α]) / (1 + m[:λ_p_ss]) / (m[:ρ_ss] ^ m[:α])) ^ (1 / (1 - m[:α])) # from steady state
-    m[:w2_ss]   = m[:A2] * m[:w1_ss] # from steady state
+    m[:ρ_ss]    = exp(m[:γ]) / m[:β] - (1 - m[:δ]) # from Giorgio's MATLAB script for solving steady state
 
-    m[:klR1_ss] = m[:w1_ss] / m[:ρ_ss] * m[:α] / (1 - m[:α]) # from steady state
-    m[:klR2_ss] = m[:A2] * m[:klR1_ss] # from steady state
-    m[:k_ss]    = m[:klR1_ss] * m[:L1] # from steady state
+    m[:w1_ss]   = (m[:α] ^ m[:α] * (1 - m[:α]) ^ (1 - m[:α]) / (1 + m[:λ_p_ss]) / (m[:ρ_ss] ^ m[:α])) ^ (1 / (1 - m[:α])) # from Giorgio's MATLAB script for solving steady state
+    m[:w2_ss]   = m[:A2] * m[:w1_ss] # from Giorgio's MATLAB script for solving steady state
 
-    m[:F1_ss]   = m[:λ_p_ss] / (1 + m[:λ_p_ss]) * m[:L1] * m[:klR1_ss] ^ m[:α] # from steady state
-    m[:y1_ss]   = m[:L1] * m[:klR1_ss] ^ m[:α] - m[:F1_ss] # from steady state
-    m[:y_ss]    = m[:y1_ss] /m[:ν] # from steady state
-    m[:y2_ss]   = (1 - m[:ν]) * m[:y_ss] # from steady state
-    m[:F2_ss]   = m[:λ_p_ss] * m[:y2_ss] / m[:A2] # from steady state
-    m[:x_ss]    = m[:y_ss] # from steady state
+    m[:klR1_ss] = m[:w1_ss] / m[:ρ_ss] * m[:α] / (1 - m[:α]) # from Giorgio's MATLAB script for solving steady state
+    m[:klR2_ss] = m[:A2] * m[:klR1_ss] # from Giorgio's MATLAB script for solving steady state
+    m[:k_ss]    = m[:klR1_ss] * m[:L1] # from Giorgio's MATLAB script for solving steady state
 
-    m[:i_S_ss]   = (1 - (1 - m[:δ]) * exp(-m[:γ])) * exp(m[:γ]) * m[:k_ss] / (1 - m[:θ]) # from steady state
-    m[:g_ss]    = m[:g_x] * m[:x_ss] # from steady state
-    m[:c_ss]    = m[:y_ss] - m[:g_ss] - (1 - m[:θ]) * m[:i_S_ss] # from steady state
+    m[:F1_ss]   = m[:λ_p_ss] / (1 + m[:λ_p_ss]) * m[:L1] * m[:klR1_ss] ^ m[:α] # from Giorgio's MATLAB script for solving steady state
+    m[:y1_ss]   = m[:L1] * m[:klR1_ss] ^ m[:α] - m[:F1_ss] # from Giorgio's MATLAB script for solving steady state
+    m[:y_ss]    = m[:y1_ss] /m[:ν] # from Giorgio's MATLAB script for solving steady state
+    m[:y2_ss]   = (1 - m[:ν]) * m[:y_ss] # from Giorgio's MATLAB script for solving steady state
+    m[:F2_ss]   = m[:λ_p_ss] * m[:y2_ss] / m[:A2] # from Giorgio's MATLAB script for solving steady state
+    m[:x_ss]    = m[:y_ss] # from Giorgio's MATLAB script for solving steady state
 
-    m[:τ_ss]    = m[:τ_x] * m[:x_ss] # from steady state
-    m[:τ_H1_ss] = m[:τ_ss] * m[:ψ_H1] / m[:θ] / (1 - m[:f_H1]) # from steady state
-    m[:τ_H2_ss] = m[:τ_ss] *m[:ψ_H2] / m[:θ] / (1 - m[:f_H1]) # from steady state
-    m[:τ_s_ss]  = m[:τ_ss] - m[:θ] * (m[:f_H1] * m[:τ_H1_ss] + (1 - m[:f_H1]) * m[:τ_H2_ss]) # from steady state
+    m[:i_S_ss]   = (1 - (1 - m[:δ]) * exp(-m[:γ])) * exp(m[:γ]) * m[:k_ss] / (1 - m[:θ]) # from Giorgio's MATLAB script for solving steady state
+    m[:g_ss]    = m[:g_x] * m[:x_ss] # from Giorgio's MATLAB script for solving steady state
+    m[:c_ss]    = m[:y_ss] - m[:g_ss] - (1 - m[:θ]) * m[:i_S_ss] # from Giorgio's MATLAB script for solving steady state
 
-    m[:t_ss]    = m[:t_x] * m[:x_ss] # from steady state
-    m[:t_H1_ss] = m[:t_ss] * m[:ψ_H1] / m[:θ] / m[:f_H1] # from steady state
-    m[:t_H2_ss] = m[:t_ss] * m[:ψ_H2] / m[:θ] / (1 - m[:f_H1]) # from steady state
-    m[:t_S_ss]  = (m[:t_ss] - m[:θ] * ( m[:f_H1] * m[:t_H1_ss] + (1 - m[:f_H1]) * m[:t_H2_ss])) / (1 - m[:θ]) # from steady state
+    m[:τ_ss]    = m[:τ_x] * m[:x_ss] # from Giorgio's MATLAB script for solving steady state
+    m[:τ_H1_ss] = m[:τ_ss] * m[:ψ_H1] / m[:θ] / (1 - m[:f_H1]) # from Giorgio's MATLAB script for solving steady state
+    m[:τ_H2_ss] = m[:τ_ss] *m[:ψ_H2] / m[:θ] / (1 - m[:f_H1]) # from Giorgio's MATLAB script for solving steady state
+    m[:τ_s_ss]  = m[:τ_ss] - m[:θ] * (m[:f_H1] * m[:τ_H1_ss] + (1 - m[:f_H1]) * m[:τ_H2_ss]) # from Giorgio's MATLAB script for solving steady state
 
-    m[:c_H1_ss] = m[:c_ss] / m[:θ] / m[:f_H1] # from steady state
-    m[:c_H2_ss] = m[:c_ss] / m[:θ] / (1 - m[:f_H1]) # from steady state
-    m[:c_S_ss]  = m[:c_ss] / (1 - m[:θ]) # from steady state
-    m[:λ_H1_ss] = exp(m[:γ]) / (exp(m[:γ]) * m[:c_H1_ss] - m[:h] * m[:c_ss]) # from steady state
-    m[:λ_H2_ss] = exp(m[:γ]) / (exp(m[:γ]) * m[:c_H2_ss] - m[:h] * m[:c_ss]) # from steady state
-    m[:λ_S_ss]  = exp(m[:γ]) / (exp(m[:γ]) *m[:c_S_ss] - m[:h] * m[:c_ss]) # from steady state
-    m[:bᴿ_ss]   = (m[:g_ss] - m[:t_ss] + m[:τ_ss]) / (1 - (1.025 / 4) / exp(m[:γ]) / m[:π_ss]) # from steady state
+    m[:t_ss]    = m[:t_x] * m[:x_ss] # from Giorgio's MATLAB script for solving steady state
+    m[:t_H1_ss] = m[:t_ss] * m[:ψ_H1] / m[:θ] / m[:f_H1] # from Giorgio's MATLAB script for solving steady state
+    m[:t_H2_ss] = m[:t_ss] * m[:ψ_H2] / m[:θ] / (1 - m[:f_H1]) # from Giorgio's MATLAB script for solving steady state
+    m[:t_S_ss]  = (m[:t_ss] - m[:θ] * ( m[:f_H1] * m[:t_H1_ss] + (1 - m[:f_H1]) * m[:t_H2_ss])) / (1 - m[:θ]) # from Giorgio's MATLAB script for solving steady state
+
+    m[:c_H1_ss] = m[:c_ss] / m[:θ] / m[:f_H1] # from Giorgio's MATLAB script for solving steady state
+    m[:c_H2_ss] = m[:c_ss] / m[:θ] / (1 - m[:f_H1]) # from Giorgio's MATLAB script for solving steady state
+    m[:c_S_ss]  = m[:c_ss] / (1 - m[:θ]) # from Giorgio's MATLAB script for solving steady state
+    m[:λ_H1_ss] = exp(m[:γ]) / (exp(m[:γ]) * m[:c_H1_ss] - m[:h] * m[:c_ss]) # from Giorgio's MATLAB script for solving steady state
+    m[:λ_H2_ss] = exp(m[:γ]) / (exp(m[:γ]) * m[:c_H2_ss] - m[:h] * m[:c_ss]) # from Giorgio's MATLAB script for solving steady state
+    m[:λ_S_ss]  = exp(m[:γ]) / (exp(m[:γ]) *m[:c_S_ss] - m[:h] * m[:c_ss]) # from Giorgio's MATLAB script for solving steady state
+    m[:R_ss]    = 1.025 / 4.
+    m[:bᴿ_ss]   = (m[:g_ss] - m[:t_ss] + m[:τ_ss]) / (1 - m[:R_ss] / exp(m[:γ]) / m[:π_ss]) # from Giorgio's MATLAB script for solving steady state
+
+    # PROBLEM STEADY STATES
     m[:λ_SH1_ss]= (1 - m[:θ]) * m[:f_S1] / ((1 - m[:θ]) * m[:f_S1] + m[:θ] * m[:f_H1]) * m[:λ_S_ss] +
-                       m[:θ] * m[:f_H1] / ((1 - m[:θ]) * m[:f_S1] + m[:θ] * m[:f_H1]) * m[:λ_H1_ss] # ask will
-    m[:λ_SH1_ss]= (1 - m[:θ]) * (1 - m[:f_S1]) / ((1 - m[:θ]) * (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) * m[:λ_S_ss] +
-                       m[:θ] * (1 - m[:f_H1]) / ((1 - m[:θ]) * (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) * m[:λ_H2_ss] # ask will
-    m[:R_ss]    = (1.025 / 4)
-    m[:mc1_ss]  = m[:α] * m[:ρ_ss] + (1 - m[:α]) * m[:w1_ss] # JPT?
-    m[:mc2_ss]  = m[:α] * m[:ρ_ss] + (1 - m[:α]) * (m[:w2_ss]) # a??
+                       m[:θ] * m[:f_H1] / ((1 - m[:θ]) * m[:f_S1] + m[:θ] * m[:f_H1]) * m[:λ_H1_ss] # ???
+    m[:λ_SH2_ss]= (1 - m[:θ]) * (1 - m[:f_S1]) / ((1 - m[:θ]) * (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) * m[:λ_S_ss] +
+                       m[:θ] * (1 - m[:f_H1]) / ((1 - m[:θ]) * (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) * m[:λ_H2_ss] # ???
+    m[:mc1_ss]  = m[:α] * m[:ρ_ss] + (1 - m[:α]) * m[:w1_ss] # ???
+    m[:mc2_ss]  = m[:α] * m[:ρ_ss] + (1 - m[:α]) * (m[:w2_ss]) # ???
 
     return m
-
 end
 
 function model_settings!(m::COTHANK)
