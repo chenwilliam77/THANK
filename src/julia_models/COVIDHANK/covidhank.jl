@@ -142,8 +142,8 @@ function init_model_indices!(m::COTHANK)
 
     # Equilibrium conditions
     equilibrium_conditions = [:eq_KL_ratio_good1, :eq_mc_good1, :eq_KL_ratio_good2, :eq_mc_good2, :eq_production_good1, :eq_production_good2,
-                              :eq_production_finalgood, :eq_price_index, :eq_price_phillips_good1, :eq_price_phillips_good2,
-                              :eq_marg_utility_S, :eq_marg_utility_H1, :eq_marg_utility_H2, :eq_average_c,
+                              :eq_production_finalgood, :eq_demand_good1, :eq_demand_good2, :eq_price_index, :eq_price_phillips_good1,
+                              :eq_price_phillips_good2, :eq_marg_utility_S, :eq_marg_utility_H1, :eq_marg_utility_H2, :eq_average_c,
                               :eq_euler, :eq_c_H1, :eq_c_H2, :eq_cap_util, :eq_ϕ, :eq_i, :eq_cap_input, :eq_cap_accum, :eq_wage_phillips_good1,
                               :eq_marg_sub_good1, :eq_avg_marg_util_SH1, :eq_wage_phillips_good2, :eq_marg_sub_good2, :eq_avg_marg_util_SH2,
                               :eq_mp, :eq_revenue, :eq_transfer, :eq_realdebt, :eq_fiscal_rule, :eq_redistribute_H1, :eq_redistribute_H2,
