@@ -238,241 +238,242 @@ those).
 """
 function init_parameters!(m::COTHANK)
     # Calibrated parameters
-    m <= parameter(:gy_ss, 0.2, fixed=true,
+#=    m <= parameter(:gy_ss, 0.2, fixed=true,
                    description="g_ss_ratio: steady state government spending to GDP ratio.",
-                   tex_label = "g^{ss}" )
+                   tex_label = "g^{ss}" ) # from thank.jl (unused)
+=#
     m <= parameter(:δ, 0.025, fixed=true,
                    description="δ: The capital depreciation rate.",
-                   tex_label = "\\delta" )
+                   tex_label = "\\delta" ) # from Giorgio's matlab script
     m <= parameter(:t_h_0_L_ss, 0.0, fixed=true,
                    description="New parameter! Might estimate", # FIX THIS DESCRIPTION
-                   tex_label = "g^{ss}" )
+                   tex_label = "g^{ss}" ) # from thank.jl (unused)
     # Non standard devation parameters
     m <= parameter(:α, 0.25, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Normal(0.30, 0.05), fixed = false,
                    description="α: Capital elasticity in the intermediate goods sector's production function (also known as the capital share).",
-                   tex_label = "\\alpha")
+                   tex_label = "\\alpha") # from Giorgio's matlab script
 
-    m <= parameter(:ι_p, 0.21, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.5, 0.15), fixed = false,
+#=    m <= parameter(:ι_p, 0.21, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.5, 0.15), fixed = false,
                    description = "ι_p: The weight attributed to last period's inflation in price indexation. " *
                    "(1-ι_p) is the weight attributed to steady-state inflation.",
-                   tex_label = "\\iota_p")
-
-    m <= parameter(:ι_w, 0.15, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.5, 0.15), fixed = false,
+                   tex_label = "\\iota_p") # from thank.jl (unused?)
+=#
+#=    m <= parameter(:ι_w, 0.15, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.5, 0.15), fixed = false,
                    description="ι_w: The weight attributed to last period's wage in wage indexation. "
                     * "(1-ι_w) is the weight attributed to steady-state wages.",
-                   tex_label = "\\iota_w")
-
+                   tex_label = "\\iota_w") # from thank.jl (unused?)
+=#
     m <= parameter(:γ100, log(1.02)/4, (-5.0, 5.0), (-5., 5.), ModelConstructors.Untransformed(), Normal(0.5, 0.025), fixed = false,
 
                    description="γ: The log of the steady-state growth rate of technology.",
-                   tex_label = "100\\gamma")
+                   tex_label = "100\\gamma") # from Giorgio's matlab script
 
     m <= parameter(:h, 0.5, (-5.0, 5.0), (-5., 5.), ModelConstructors.Untransformed(), Beta(0.5, 0.1), fixed = false,
                    description="h: habit formation parameter.",
-                   tex_label = "h")
+                   tex_label = "h") # from Giorgio's matlab script
 
     m <= parameter(:λ_p_ss, 0.15,(-1000.,1000.),(-1000., 1000.), ModelConstructors.Untransformed(), Normal(0.15, 0.05),  fixed = false,
                    description="λ_p_ss: The steady state net price markup.",
-                   tex_label = "\\lambda_p")
+                   tex_label = "\\lambda_p") # from Giorgio's matlab script
 
     m <= parameter(:λ_w_ss, 0.12,(-1000.,1000.),(-1000., 1000.), ModelConstructors.Untransformed(), Normal(0.15, 0.05), fixed = false,
                    description = "λ_w_ss: The steady state net wage markup, which affects the elasticity of substitution between differentiated labor services.",
-                   tex_label = "\\lambda_w")
+                   tex_label = "\\lambda_w") # from Giorgio's matlab script
 
     m <= parameter(:L_ss, 0.5, (-1000., 1000.), (-1e3, 1e3), ModelConstructors.Untransformed(), Normal(0.0,0.5), fixed=false,
                    description="L_ss: The steady state for log hours.",
-                   tex_label = "\\log(L)^{ss}")
+                   tex_label = "\\log(L)^{ss}") # from script
 
     m <= parameter(:π_ss100, 1.02^(1/4), (1e-5, 10.), (1e-5, 10.), ModelConstructors.Exponential(), Normal(0.5, 0.1), fixed = false,
 
                    description="π_ss100: The steady-state rate of net inflation multiplied by 100.",
-                   tex_label = "100 \\pi^{ss}")
+                   tex_label = "100 \\pi^{ss}") # from script
 
     m <= parameter(:π_S_ss100, 1.02^(1/4), (1e-5, 10.), (1e-5, 10.), ModelConstructors.Exponential(), Normal(0.5, 0.1), fixed = false,
 
                    description="π_ss100: The steady-state rate of net inflation multiplied by 100.",
-                   tex_label = "100 \\pi^{ss}")
+                   tex_label = "100 \\pi^{ss}") # ???
 
-    m <= parameter(:Fβ, 0.1, (1e-5, 10.), (1e-5, 10.), ModelConstructors.Exponential(), Gamma(0.25, 0.1), fixed=false,
+#=    m <= parameter(:Fβ, 0.1, (1e-5, 10.), (1e-5, 10.), ModelConstructors.Exponential(), Gamma(0.25, 0.1), fixed=false,
                    description = "Fβ: Discount rate transformed.",
-                   tex_label = "100(\\beta^{-1} - 1)")
-
+                   tex_label = "100(\\beta^{-1} - 1)") # from thank.jl (unused?)
+=#
     m <= parameter(:ν, 4., (1e-5, 10.), (1e-5, 10.), ModelConstructors.Exponential(), Gamma(2, 0.75), fixed = false,
                    description="ν_l: The inverse Frisch elasticity.",
-                   tex_label = "\\nu")
+                   tex_label = "\\nu") # from thank.jl
 
     m <= parameter(:ξ_p, 0.85, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.66, 0.1), fixed=false,
                    description="ξ_p: The Calvo parameter. In every period, intermediate goods producers optimize prices with probability (1-ξ_p). "
                    * "With probability ξ_p, prices are adjusted according to a weighted average of the previous period's inflation "
                    * "(π_t1) and steady-state inflation (π_ss).",
-                   tex_label = "\\xi_p")
+                   tex_label = "\\xi_p") # from thank.jl
 
     m <= parameter(:ξ_w, 0.75, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.66, 0.1), fixed=false,
                    description="ξ_w: (1-ξ_w) is the probability with which households can freely choose wages in each period. "
                    * "With probability ξ_w, wages increase at a geometrically weighted average of the steady state rate of "
                    * "wage increases and last period's productivity times last period's inflation.",
-                   tex_label = "\\xi_w")
+                   tex_label = "\\xi_w") # from thank.jl
 
     m <= parameter(:χ, 5., (0., 10.), (1e-5, 0.), ModelConstructors.Exponential(), Gamma(5., 1.), fixed = false,
                    description="χ: The elasticity of the capital utilization cost function.",
-                   tex_label = "\\chi")
+                   tex_label = "\\chi") # from thank.jl
 
     m <= parameter(:S′′, 2.5, (-15., 15.), (-15., 15.), ModelConstructors.Untransformed(), Gamma(4., 1), fixed = false,
                    description="S′′: The investment adjust cost.",
-                   tex_label = "S^{\\prime\\prime}")
+                   tex_label = "S^{\\prime\\prime}") # from thank.jl
 
-    m <= parameter(:ψ_1, 2., (1e-5, 10.), (1e-5, 10.00), ModelConstructors.Exponential(), Normal(1.7, 0.3), fixed = false,
+#=    m <= parameter(:ψ_1, 2., (1e-5, 10.), (1e-5, 10.00), ModelConstructors.Exponential(), Normal(1.7, 0.3), fixed = false,
                    description="ψ₁: Weight on inflation gap in monetary policy rule.",
-                   tex_label = "\\psi_1")
+                   tex_label = "\\psi_1") # from thank.jl (unused?)
 
     m <= parameter(:ψ_2, 0.1, (-0.5, 0.5), (-0.5, 0.5), ModelConstructors.Untransformed(), Normal(0.125, 0.05), fixed = false,
                    description="ψ₂: Weight on output gap in monetary policy rule.",
-                   tex_label = "\\psi_2")
+                   tex_label = "\\psi_2") # from thank.jl (unused?)
 
     m <= parameter(:ψ_3, 0.25, (-0.5, 0.5), (-0.5, 0.5), ModelConstructors.Untransformed(), Normal(0.125, 0.05), fixed = false,
                    description="ψ₃: Weight on rate of change of output gap in the monetary policy rule.",
-                   tex_label = "\\psi_3")
-
+                   tex_label = "\\psi_3") # from thank.jl (unused?)
+=#
     m <= parameter(:ρ_T, 0.8, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_R: persistence in the monetary policy rule.",
-                   tex_label = "\\rho_{R}")
+                   tex_label = "\\rho_{R}") # ???
 
     # exogenous processes - autocorrelation
     m <= parameter(:ρ_R, 0.8, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_R: persistence in the monetary policy rule.",
-                   tex_label = "\\rho_{R}")
+                   tex_label = "\\rho_{R}") # from thank.jl
 
     m <= parameter(:ρ_η_mp, 0.8, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_R: persistence in the monetary policy rule.",
-                   tex_label = "\\rho_{R}")
+                   tex_label = "\\rho_{R}") # from thank.jl
 
     m <= parameter(:ρ_z, 0.25, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_z: AR(1) coefficient in the technology process.",
-                   tex_label = "\\rho_{z}")
+                   tex_label = "\\rho_{z}") # from thank.jl
 
     m <= parameter(:ρ_a, 0.15, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.4, 0.2), fixed = false,
-                   description="ρ_mp: AR(1) coefficient in the monetary policy shock process.",
-                   tex_label = "\\rho_{a}")
+                   description="ρ_a: AR(1) coefficient", # fix description
+                   tex_label = "\\rho_{a}") # ???
 
     m <= parameter(:ρ_d, 0.15, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.4, 0.2), fixed = false,
-                   description="ρ_mp: AR(1) coefficient in the monetary policy shock process.",
-                   tex_label = "\\rho_{d}")
+                   description="ρ_d: AR(1) coefficient", # fix description
+                   tex_label = "\\rho_{d}") # ???
 
     m <= parameter(:ρ_φ, 0.15, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.4, 0.2), fixed = false,
-                   description="ρ_mp: AR(1) coefficient in the monetary policy shock process.",
-                   tex_label = "\\rho_{\\varphi}")
+                   description="ρ_φ: AR(1) coefficient.", # fix description
+                   tex_label = "\\rho_{\\varphi}") # ???
 
     m <= parameter(:ρ_μ, 0.7, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_μ: AR(1) coefficient in capital adjustment cost process.",
-                   tex_label = "\\rho_{\\mu}")
+                   tex_label = "\\rho_{\\mu}") # from thank.jl
 
     m <= parameter(:ρ_b, 0.7, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_b: AR(1) coefficient in the intertemporal preference shifter process.",
-                   tex_label = "\\rho_b")
+                   tex_label = "\\rho_b") # from thank.jl
 
     m <= parameter(:ρ_λ_p, 0.95, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_λ_p: AR(1) coefficient in the price mark-up shock process.",
-                   tex_label = "\\rho_{\\lambda_p}")
+                   tex_label = "\\rho_{\\lambda_p}") # from thank.jl
 
     m <= parameter(:ρ_λ_w, 0.98, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_λ_w: AR(1) coefficient in the wage mark-up shock process.",
-                   tex_label = "\\rho_{\\lambda_w}")
+                   tex_label = "\\rho_{\\lambda_w}") # from thank.jl
 
     m <= parameter(:ρ_g, 0.98, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_g: AR(1) coefficient in the government spending process.",
-                   tex_label = "\\rho_g")
+                   tex_label = "\\rho_g") # from thank.jl
 
     m <= parameter(:ρ_τ_S, 0.98, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
-                   description="ρ_g: AR(1) coefficient in the government spending process.",
-                   tex_label = "\\rho_g")
+                   description="ρ_τ_S: AR(1) coefficient.", # fix description
+                   tex_label = "\\rho_\\tau_S") # ???
 
     m <= parameter(:ρ_τ_H1, 0.98, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
-                   description="ρ_g: AR(1) coefficient in the government spending process.",
-                   tex_label = "\\rho_g")
+                   description="ρ_τ_H1: AR(1) coefficient.", # fix description
+                   tex_label = "\\rho_\\tau_H1") # ???
 
     m <= parameter(:ρ_τ_H2, 0.98, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
-                   description="ρ_g: AR(1) coefficient in the government spending process.",
-                   tex_label = "\\rho_g")
+                   description="ρ_τ_H2: AR(1) coefficient.", # fix description
+                   tex_label = "\\rho_g") # ???
 
     m <= parameter(:η_λ_p, 0.75, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.50, 0.20), fixed = false,
                    description="η_λ_p: Moving average component in the price markup shock.",
-                   tex_label = "\\eta_{\\lambda_p}")
+                   tex_label = "\\eta_{\\lambda_p}") # from thank.jl
 
     m <= parameter(:η_λ_w, 0.95, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.50, 0.20), fixed = false,
                    description="η_λ_w: Moving average component in the wage markup shock.",
-                   tex_label = "\\eta_{\\lambda_w}")
+                   tex_label = "\\eta_{\\lambda_w}") # from thank.jl
 
     # exogenous processes - standard deviation
     m <= parameter(:σ_z, 0.9, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(0.5, 1), fixed = false,
                    description="σ_z: The standard deviation of the technology process.",
-                   tex_label = "\\sigma_{z}")
+                   tex_label = "\\sigma_{z}") # from thank.jl
 
     m <= parameter(:σ_a, 0.9, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(0.5, 1), fixed = false,
-                   description="σ_z: The standard deviation of the technology process.",
-                   tex_label = "\\sigma_{z}")
+                   description="σ_a:", # fix description
+                   tex_label = "\\sigma_{a}") # ???
 
     m <= parameter(:σ_d, 0.9, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(0.5, 1), fixed = false,
-                   description="σ_z: The standard deviation of the technology process.",
-                   tex_label = "\\sigma_{z}")
+                   description="σ_d: s.", # fix description
+                   tex_label = "\\sigma_{d}") # ???
 
     m <= parameter(:σ_φ, 5., (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(0.5, 1), fixed = false,
-                   description="σ_μ: The standard deviation of the exogenous marginal efficiency of investment shock process.",
-                   tex_label = "\\sigma_{\\mu}")
+                   description="σ_φ:.", # fix description
+                   tex_label = "\\sigma_{\\mu}") # ???
 
     m <= parameter(:σ_μ, 5., (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(0.5, 1), fixed = false,
                    description="σ_μ: The standard deviation of the exogenous marginal efficiency of investment shock process.",
-                   tex_label = "\\sigma_{\\mu}")
+                   tex_label = "\\sigma_{\\mu}") # from thank.jl
 
     m <= parameter(:σ_b, 0.05, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(0.1, 1), fixed = false,
                    description="σ_b: The standard deviation of the intertemporal preference shifter process.",
-                   tex_label = "\\sigma_{b}")
+                   tex_label = "\\sigma_{b}") # from thank.jl
 
     m <= parameter(:σ_λ_p, 0.15, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(0.1, 1), fixed = false,
                    description="σ_λ_p: The mean of the process that generates the price elasticity of the composite good. " *
                    "Specifically, the elasticity is (1+λ_{f,t})/(λ_{p_t}).",
-                   tex_label = "\\sigma_{\\lambda_p}")
+                   tex_label = "\\sigma_{\\lambda_p}") # from thank.jl
 
     m <= parameter(:σ_λ_w, 0.2, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(0.1, 1), fixed = false,
-                   tex_label = "\\sigma_{\\lambda_w}")
+                   tex_label = "\\sigma_{\\lambda_w}") # from thank.jl
 
     m <= parameter(:σ_η_mp, 0.2, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(2, 0.10), fixed = false,
-                   description="σ_mp: The standard deviation of the monetary policy shock.",
-                   tex_label = "\\sigma_{mp}")
+                   description="σ_η_mp: .", # fix description
+                   tex_label = "\\sigma_{\\eta_mp}") # ???
 
     m <= parameter(:σ_g, 0.35, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(0.5, 1), fixed = false,
                    description="σ_g: The standard deviation of the government spending process.",
-                   tex_label = "\\sigma_{g}")
+                   tex_label = "\\sigma_{g}") # from thank.jl
 
     m <= parameter(:σ_τ_S, 0.35, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(0.5, 1), fixed = false,
-                   description="σ_g: The standard deviation of the government spending process.",
-                   tex_label = "\\sigma_{g}")
+                   description="σ_τ_S.", # fix description
+                   tex_label = "\\sigma_{\\tau_S}") # ???
 
     m <= parameter(:σ_τ_H1, 0.35, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(0.5, 1), fixed = false,
-                   description="σ_g: The standard deviation of the government spending process.",
-                   tex_label = "\\sigma_{g}")
+                   description="σ_τ_H1:.", # fix description
+                   tex_label = "\\sigma_{\\tau_{H1}}") # ???
 
     m <= parameter(:σ_τ_H2, 0.35, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Exponential(), RootInverseGamma(0.5, 1), fixed = false,
-                   description="σ_g: The standard deviation of the government spending process.",
-                   tex_label = "\\sigma_{g}")
+                   description="σ_τ_H2: .", # fix description
+                   tex_label = "\\sigma_{\\tau_{H2}}") # ???
 
     # new parameters
-    m <= parameter(:θ, 0.25, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
-    m <= parameter(:σ, 0.98, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
-    m <= parameter(:σ′, 0.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
-    m <= parameter(:τ_x, 0.2, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
-    m <= parameter(:t_x, 0.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
-    m <= parameter(:ζ, 0.98, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
-    m <= parameter(:ζ_X, 0.98, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
-    m <= parameter(:ζ_G, 0.98, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
-    m <= parameter(:ζ_B, 0.98, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
+    m <= parameter(:θ, 0.25, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from matlab script
+    m <= parameter(:σ, 0.98, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # ???
+    m <= parameter(:σ′, 0.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # ???
+    m <= parameter(:τ_x, 0.2, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from matlab script
+    m <= parameter(:t_x, 0.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from matlab script
+    m <= parameter(:ζ, 0.98, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # ???
+    m <= parameter(:ζ_X, 0.98, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # ???
+    m <= parameter(:ζ_G, 0.98, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # ???
+    m <= parameter(:ζ_B, 0.98, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # ???
     # m <= parameter(:f_H, 1/4, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
-    m <= parameter(:f_H1, 1/4, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
-    m <= parameter(:f_S1, 3/4, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
-    m <= parameter(:H1, 1.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from steady state
-    m <= parameter(:H2, 0.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from steady state
-    m <= parameter(:A2, 0.7, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from steady state
-    m <= parameter(:s, 0.995, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from steady state
-    m <= parameter(:g_x, 0.18, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
+    m <= parameter(:f_H1, 1/4, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) #from matlab script
+    m <= parameter(:f_S1, 3/4, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from matlab script
+    m <= parameter(:H1, 1.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from matlab script
+    m <= parameter(:H2, 0.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from matlab script
+    m <= parameter(:A2, 0.7, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from matlab script
+    m <= parameter(:s, 0.995, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from matlab script
+    m <= parameter(:g_x, 0.18, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from matlab script
     m <= parameter(:s_x, 0.18, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # ???
     m <= parameter(:sx, 0.18, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # ???
 
@@ -486,7 +487,6 @@ function init_parameters!(m::COTHANK)
     m <= SteadyStateParameter(:expγ, NaN, tex_label = "exp^\\gamma")
     m <= SteadyStateParameter(:ψ_H1, NaN, tex_label = "\\psi_H1")
     m <= SteadyStateParameter(:ψ_H2, NaN, tex_label = "\\psi_H2")
-    m <= SteadyStateParameter(:g_x, NaN, tex_label = "g_x")
     m <= SteadyStateParameter(:L1, NaN, tex_label = "L1")
     m <= SteadyStateParameter(:L2, NaN, tex_label = "L2")
     m <= SteadyStateParameter(:ρ_ss, NaN, tex_label = "\\rho")
