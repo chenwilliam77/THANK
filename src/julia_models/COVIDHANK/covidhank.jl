@@ -319,7 +319,7 @@ function init_parameters!(m::COTHANK)
                    description="ρ_T: parameter governing fiscal rule.", # Update this description later
                    tex_label = "\\rho_{R}") # ???
 
-    # new parameters, all of these are inputs into the steady state calculations given by Giorgio's matlab script
+    # new parameters (from θ to v), all of these are inputs into the steady state calculations given by Giorgio's matlab script
     m <= parameter(:θ, 0.25, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from Giorgio's MATLAB script
     m <= parameter(:τ_x, 0.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from Giorgio's MATLAB script
     m <= parameter(:t_x, 0.2, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from Giorgio's MATLAB script
