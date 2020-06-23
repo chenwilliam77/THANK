@@ -123,8 +123,8 @@ function init_model_indices!(m::COTHANK)
                          :λ_S_t, :λ_H1_t, :λ_H2_t, :λ_SH1_t, :λ_SH2_t, :c_t,  :c_H1_t, :c_H2_t, :c_S_t, :i_S_t,
                          :R_t, :u_t, :ϕ_t, :z_t, :ρ_t, :a_t, :d_t, :x_t, :b_t, :t_t, :φ_t,
                          :g_t, :g_w1_t, :g_w2_t, :μ_t, :bᴿ_t, :η_mp_t, :t_S_t, :t_H1_t, :t_H2_t,
-                         :τ_t, :τ_S_t, :τ_H1_t, :τ_H2_t, :ι_S_t, :Eπ_t, :Eπ1_t, :Eπ2_t, :Ez_t, :Eλ_S_t,
-                         :Eλ_H1_t, :Eλ_H2_t, :Ex_t, :Eϕ_t, :Eρ_t, :Eι_S_t, :Ew1_t, :Ew2_t]
+                         :τ_t, :τ_S_t, :τ_H1_t, :τ_H2_t, :Eπ_t, :Eπ1_t, :Eπ2_t, :Ez_t, :Eλ_S_t,
+                         :Eλ_H1_t, :Eλ_H2_t, :Ex_t, :Eϕ_t, :Eρ_t, :Ei_S_t, :Ew1_t, :Ew2_t]
                                                                                 # CHECK BACK IF ANY CAN BE AUGMENTED VARIABLES
 #=                         :y_f_t, :k_f_t, :L_f_t, :Rk_f_t, :w_f_t, :mc_f_t,       # flexible prices
                          :λ_f_t, :c_f_t, :R_f_t, :u_f_t, :ϕ_f_t,
@@ -138,11 +138,11 @@ function init_model_indices!(m::COTHANK)
 
     # Expectations shocks
     expected_shocks = [:Eπ_sh, :Eπ1_sh, :Eπ2_sh, :Ez_sh, :Eλ_S_sh, :Eλ_H1_sh, :Eλ_H2_sh,
-                       :Ex_sh, :Eϕ_sh, :Eρ_sh, :Eι_S_sh, :Ew1_sh, :Ew2_sh] # sticky prices
+                       :Ex_sh, :Eϕ_sh, :Eρ_sh, :Ei_S_sh, :Ew1_sh, :Ew2_sh] # sticky prices
 
     # Equilibrium conditions
     equilibrium_conditions = [:eq_KL_ratio_good1, :eq_mc_good1, :eq_KL_ratio_good2, :eq_mc_good2, :eq_production_good1, :eq_production_good2,
-                              :eq_production_finalgood, :eq_demand_good1, :eq_demand_good2, :eq_price_index, :eq_price_phillips_good1,
+                              :eq_production_finalgood, :eq_demand_good1, :eq_price_index, :eq_price_phillips_good1,
                               :eq_price_phillips_good2, :eq_marg_utility_S, :eq_marg_utility_H1, :eq_marg_utility_H2, :eq_average_c,
                               :eq_euler, :eq_c_H1, :eq_c_H2, :eq_cap_util, :eq_ϕ, :eq_i, :eq_cap_input, :eq_cap_accum, :eq_wage_phillips_good1,
                               :eq_marg_sub_good1, :eq_avg_marg_util_SH1, :eq_wage_phillips_good2, :eq_marg_sub_good2, :eq_avg_marg_util_SH2,
@@ -150,7 +150,7 @@ function init_model_indices!(m::COTHANK)
                               :eq_real_profits, :eq_cap_market_clear, :eq_goods_market_clear, :eq_gdp,
                               :eq_z, :eq_a, :eq_d, :eq_φ, :eq_μ, :eq_b, :eq_λ_p, :eq_λ_w, :eq_η_mp, :eq_g, :eq_τ_S, :eq_τ_H1, :eq_τ_H2,
                               :eq_Eπ, :eq_Eπ1, :eq_Eπ2, :eq_Ez, :eq_Eλ_S, :eq_Eλ_H1, :eq_Eλ_H2, :eq_Ex, :eq_Eϕ,
-                              :eq_Eρ, :eq_Eι_S, :eq_Ew1, :eq_Ew2]
+                              :eq_Eρ, :eq_Ei_S, :eq_Ew1, :eq_Ew2]
 #=
                               :eq_y_f, :eq_k_f, :eq_L_f, :eq_Rk_f, :eq_w_f, :eq_mc_f,       # flexible prices
                               :eq_λ_f, :eq_c_f, :eq_R_f, :eq_u_f, :eq_ϕ_f,
@@ -295,6 +295,7 @@ function init_parameters!(m::COTHANK)
 
     m <= parameter(:Fβ, 0.1, (1e-5, 10.), (1e-5, 10.), ModelConstructors.Exponential(), Gamma(0.25, 0.1), fixed=false,
                    description = "Fβ: Discount rate transformed.",
+
                    tex_label = "100(\\beta^{-1} - 1)") # from THANK
 
     m <= parameter(:ν, 4., (1e-5, 10.), (1e-5, 10.), ModelConstructors.Exponential(), Gamma(2, 0.75), fixed = false,
@@ -330,6 +331,7 @@ function init_parameters!(m::COTHANK)
                    tex_label = "\\psi_2") # from THANK
 
     m <= parameter(:ψ_3, 0.25, (-0.5, 0.5), (-0.5, 0.5), ModelConstructors.Untransformed(), Normal(0.125, 0.05), fixed = false,
+
                    description="ψ₃: Weight on ouptut growth in the monetary policy rule.",
                    tex_label = "\\psi_3") # from THANK
 
@@ -599,8 +601,9 @@ function steadystate!(m::COTHANK)
                        m[:θ] * m[:f_H1] / ((1 - m[:θ]) * m[:f_S1] + m[:θ] * m[:f_H1]) * m[:λ_H1_ss] # ???
     m[:λ_SH2_ss]= (1 - m[:θ]) * (1 - m[:f_S1]) / ((1 - m[:θ]) * (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) * m[:λ_S_ss] +
                        m[:θ] * (1 - m[:f_H1]) / ((1 - m[:θ]) * (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) * m[:λ_H2_ss] # ???
-    m[:mc1_ss]  = m[:α] * m[:ρ_ss] + (1 - m[:α]) * m[:w1_ss] # ???
-    m[:mc2_ss]  = m[:α] * m[:ρ_ss] + (1 - m[:α]) * (m[:w2_ss]) # ???
+    m[:mc1_ss]  = 1 / (m[:α] ^ m[:α] * (1 - m[:α]) ^ (1 - m[:α])) * m[:ρ_r] ^ m[:α] * m[:w1_ss] ^ (1 - m[:α]) # ???
+    m[:mc1_ss]  = 1 / (m[:α] ^ m[:α] * (1 - m[:α]) ^ (1 - m[:α])) * m[:ρ_r] ^ m[:α] * (m[:w1_ss]/ (m[:a_ss] * m[:A2])) ^ (1 - m[:α]) # ???
+
 
     return m
 end

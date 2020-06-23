@@ -98,19 +98,11 @@ function eqcond(m::COTHANK)
     Γ1[eq[:eq_price_index], endo[:d_t]] = (1. - m[:ν]) / (1. - m[:ζ])
 
     Γ0[eq[:eq_demand_good1], endo[:y1_t]] = 1
+    Γ0[eq[:eq_demand_good1], endo[:y2_t]] = -1
     Γ0[eq[:eq_demand_good1], endo[:π1_t]] = m[:ζ]
-    Γ0[eq[:eq_demand_good1], endo[:y_t]] = -1
+    Γ0[eq[:eq_demand_good1], endo[:π2_t]] = -m[:ζ]
     Γ1[eq[:eq_demand_good1], endo[:y1_t]] = 1
-    Γ1[eq[:eq_demand_good1], endo[:y_t]] = -1
-
-    Γ0[eq[:eq_demand_good2], endo[:y2_t]] = 1
-    Γ0[eq[:eq_demand_good2], endo[:d_t]] = -1
-    Γ0[eq[:eq_demand_good2], endo[:π2_t]] = m[:ζ]
-    Γ0[eq[:eq_demand_good2], endo[:y_t]] = -1
-    Γ1[eq[:eq_demand_good2], endo[:y2_t]] = 1
-    Γ1[eq[:eq_demand_good2], endo[:d_t]] = -1
-    Γ1[eq[:eq_demand_good2], endo[:y_t]] = -1
-
+    Γ1[eq[:eq_demand_good1], endo[:y2_t]] = -1
 
     ### 4. Price Phillips Curve
 
@@ -312,11 +304,11 @@ function eqcond(m::COTHANK)
     Γ0[eq[:eq_i], endo[:λ_S_t]]  = -1.
     Γ0[eq[:eq_i], endo[:ϕ_t]]    = 1.
     Γ0[eq[:eq_i], endo[:μ_t]]    = 1.
-    Γ0[eq[:eq_i], endo[:ι_S_t]]  = -exp(2. * m[:γ]) * m[:S′′] * (1. + m[:β])
+    Γ0[eq[:eq_i], endo[:i_S_t]]  = -exp(2. * m[:γ]) * m[:S′′] * (1. + m[:β])
     Γ0[eq[:eq_i], endo[:z_t]]    = -exp(2. * m[:γ]) * m[:S′′]
-    Γ0[eq[:eq_i], endo[:Eι_S_t]] = m[:β] * exp(2. * m[:γ]) * m[:S′′]
+    Γ0[eq[:eq_i], endo[:Ei_S_t]] = m[:β] * exp(2. * m[:γ]) * m[:S′′]
     Γ0[eq[:eq_i], endo[:Ez_t]]   = m[:β] * exp(2. * m[:γ]) * m[:S′′]
-    Γ1[eq[:eq_i], endo[:ι_S_t]]  = -exp(2. * m[:γ]) * m[:S′′]
+    Γ1[eq[:eq_i], endo[:i_S_t]]  = -exp(2. * m[:γ]) * m[:S′′]
 
     Γ0[eq[:eq_cap_input], endo[:k_t]]   = -1.
     Γ0[eq[:eq_cap_input], endo[:u_t]]   = 1.
@@ -326,14 +318,14 @@ function eqcond(m::COTHANK)
     Γ0[eq[:eq_cap_accum], endo[:k_S_t]] = 1.
     Γ0[eq[:eq_cap_accum], endo[:z_t]]   = (1. - m[:δ]) * exp(-m[:γ])
     Γ0[eq[:eq_cap_accum], endo[:μ_t]]   = (1. - (1. - m[:δ]) * exp(-m[:γ]))
-    Γ0[eq[:eq_cap_accum], endo[:ι_S_t]] = (1. - (1. - m[:δ]) * exp(-m[:γ]))
+    Γ0[eq[:eq_cap_accum], endo[:i_S_t]] = (1. - (1. - m[:δ]) * exp(-m[:γ]))
     Γ1[eq[:eq_cap_accum], endo[:k_S_t]] = (1. - m[:δ]) * exp(-m[:γ])
 #=
     # Flexible prices
     Γ0[eq[:eq_k_S_f], endo[:k_S_f_t]] = 1
     Γ0[eq[:eq_k_S_f], endo[:z_t]] = (1 - m[:δ]) * exp(-m[:γ])
     Γ0[eq[:eq_k_S_f], endo[:μ_t]] = (1 - (1 - m[:δ]) * exp(-m[:γ]))
-    Γ0[eq[:eq_k_S_f], endo[:ι_S_f_t]] = (1 - (1 - m[:δ]) * exp(-m[:γ]))
+    Γ0[eq[:eq_k_S_f], endo[:i_S_f_t]] = (1 - (1 - m[:δ]) * exp(-m[:γ]))
     Γ1[eq[:eq_k_S_f], endo[:k_S_f_t]] = (1 - m[:δ]) * exp(-m[:γ])
 =#
     ### 7. Wage Phillips Curve
@@ -549,8 +541,8 @@ function eqcond(m::COTHANK)
     Π[eq[:eq_Eπ2],  ex[:Eπ2_sh]]  = 1.
 
     # z
-    Γ0[eq[:eq_Ez], endo[:z_t]]  = 1.
-    Γ1[eq[:eq_Ez], endo[:Ez_t]] = 1.
+    Γ0[eq[:eq_Ez], endo[:z_t]]  = -m[:ρ_z]
+    Γ0[eq[:eq_Ez], endo[:Ez_t]]  = 1
     Π[eq[:eq_Ez],  ex[:Ez_sh]]  = 1.
 
     # λ_S
@@ -583,10 +575,10 @@ function eqcond(m::COTHANK)
     Γ1[eq[:eq_Eρ], endo[:Eρ_t]] = 1.
     Π[eq[:eq_Eρ],  ex[:Eρ_sh]]  = 1.
 
-    # ι_S
-    Γ0[eq[:eq_Eι_S], endo[:ι_S_t]]  = 1.
-    Γ1[eq[:eq_Eι_S], endo[:Eι_S_t]] = 1.
-    Π[eq[:eq_Eι_S],  ex[:Eι_S_sh]]  = 1.
+    # i_S
+    Γ0[eq[:eq_Ei_S], endo[:i_S_t]]  = 1.
+    Γ1[eq[:eq_Ei_S], endo[:Ei_S_t]] = 1.
+    Π[eq[:eq_Ei_S],  ex[:Ei_S_sh]]  = 1.
 
     # w1
     Γ0[eq[:eq_Ew1], endo[:w1_t]]  = 1.
