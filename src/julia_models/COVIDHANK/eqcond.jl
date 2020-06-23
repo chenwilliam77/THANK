@@ -422,7 +422,8 @@ function eqcond(m::COTHANK)
     Γ0[eq[:eq_redistribute_H2], endo[:t_t]]    = -m[:ψ_H2]
 
     ### 9. Market clearing and aggregate resource constraint
-    Γ0[eq[:eq_real_profits], endo[:π_S_t]]  = -1.
+    # commenting out following eq condition b/c of presence of π_S_ss, unsure of parameter's meaning
+#=    Γ0[eq[:eq_real_profits], endo[:π_S_t]]  = -1.
     Γ0[eq[:eq_real_profits], endo[:y_t]]    = m[:y_ss] / ((1. - m[:θ]) * m[:π_S_ss])
     Γ0[eq[:eq_real_profits], endo[:mc1_t]]  = -m[:mc1_ss] * m[:klR1_ss] * m[:L1] / ((1. - m[:θ]) * m[:π_S_ss])
     Γ0[eq[:eq_real_profits], endo[:klR1_t]] = -m[:mc1_ss] * m[:klR1_ss] * m[:L1] / ((1. - m[:θ]) * m[:π_S_ss])
@@ -433,7 +434,7 @@ function eqcond(m::COTHANK)
                                                ((1. - m[:θ]) * m[:π_S_ss])
     Γ0[eq[:eq_real_profits], endo[:L2_t]]   = -m[:A2] ^ (1. - m[:α]) * m[:mc2_ss] * m[:klR2_ss] * m[:L2] /
                                                ((1. - m[:θ]) * m[:π_S_ss])
-
+=#
     Γ0[eq[:eq_cap_market_clear], endo[:klR1_t]] = m[:klR1_ss] * m[:L1] / m[:k_ss]
     Γ0[eq[:eq_cap_market_clear], endo[:L1_t]]   = m[:klR1_ss] * m[:L1] / m[:k_ss]
     Γ0[eq[:eq_cap_market_clear], endo[:klR2_t]] = m[:klR2_ss] * m[:L2] / m[:k_ss]
