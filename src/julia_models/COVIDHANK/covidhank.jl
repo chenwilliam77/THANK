@@ -250,12 +250,12 @@ function init_parameters!(m::COTHANK)
     m <= parameter(:ι_p, 0.21, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.5, 0.15), fixed = false,
                    description = "ι_p: The weight attributed to last period's inflation in price indexation. " *
                    "(1-ι_p) is the weight attributed to steady-state inflation.",
-                   tex_label = "\\iota_p") # THANK
+                   tex_label = "\\iota_p") # from THANK
 
     m <= parameter(:ι_w, 0.15, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.5, 0.15), fixed = false,
                    description="ι_w: The weight attributed to last period's wage in wage indexation. "
                     * "(1-ι_w) is the weight attributed to steady-state wages.",
-                   tex_label = "\\iota_w") # THANK
+                   tex_label = "\\iota_w") # from THANK
 
     m <= parameter(:h, 0.5, (-5.0, 5.0), (-5., 5.), ModelConstructors.Untransformed(), Beta(0.5, 0.1), fixed = false,
                    description="h: habit formation parameter.",
@@ -280,7 +280,7 @@ function init_parameters!(m::COTHANK)
 
     m <= parameter(:ν, 4., (1e-5, 10.), (1e-5, 10.), ModelConstructors.Exponential(), Gamma(2, 0.75), fixed = false,
                    description="ν_l: The inverse Frisch elasticity.",
-                   tex_label = "\\nu") # from thank.jl
+                   tex_label = "\\nu") # from THANK
 
     m <= parameter(:ξ_p, 0.85, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.66, 0.1), fixed=false,
                    description="ξ_p: The Calvo parameter. In every period, intermediate goods producers optimize prices with probability (1-ξ_p). "
@@ -315,7 +315,7 @@ function init_parameters!(m::COTHANK)
                    description="ψ₃: Weight on ouptut growth in the monetary policy rule.",
                    tex_label = "\\psi_3") # from THANK
 
-    # new parameters (from θ to v), all of these are inputs into the steady state calculations given by Giorgio's matlab script
+    # the following new parameters (from θ to v) are inputs into the steady state calculations given by Giorgio's matlab script
     m <= parameter(:θ, 0.25, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from Giorgio's MATLAB script
     m <= parameter(:τ_x, 0.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from Giorgio's MATLAB script
     m <= parameter(:t_x, 0.2, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from Giorgio's MATLAB script
