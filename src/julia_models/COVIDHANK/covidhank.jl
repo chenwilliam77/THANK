@@ -315,10 +315,6 @@ function init_parameters!(m::COTHANK)
                    description="ψ₃: Weight on ouptut growth in the monetary policy rule.",
                    tex_label = "\\psi_3") # from THANK
 
-    m <= parameter(:ρ_T, 0.8, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
-                   description="ρ_T: parameter governing fiscal rule.", # Update this description later
-                   tex_label = "\\rho_{R}") # ???
-
     # new parameters (from θ to v), all of these are inputs into the steady state calculations given by Giorgio's matlab script
     m <= parameter(:θ, 0.25, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from Giorgio's MATLAB script
     m <= parameter(:τ_x, 0.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from Giorgio's MATLAB script
@@ -399,6 +395,10 @@ function init_parameters!(m::COTHANK)
     m <= parameter(:ρ_τ_H2, 0.98, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
                    description="ρ_τ_H2: AR(1) coefficient.", # fix description
                    tex_label = "\\rho_g") # ???
+
+    m <= parameter(:ρ_T, 0.8, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
+                   description="ρ_T: parameter governing fiscal rule.", # Update this description later
+                   tex_label = "\\rho_{R}") # ???
 
     m <= parameter(:η_λ_p, 0.75, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.50, 0.20), fixed = false,
                    description="η_λ_p: Moving average component in the price markup shock.",
