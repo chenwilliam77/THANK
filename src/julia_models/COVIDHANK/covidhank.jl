@@ -257,11 +257,6 @@ function init_parameters!(m::COTHANK)
                     * "(1-ι_w) is the weight attributed to steady-state wages.",
                    tex_label = "\\iota_w") # THANK
 
-    m <= parameter(:γ100, log(1.02)/4, (-5.0, 5.0), (-5., 5.), ModelConstructors.Untransformed(), Normal(0.5, 0.025), fixed = false,
-
-                   description="γ: The log of the steady-state growth rate of technology in percentage points.",
-                   tex_label = "100\\gamma") # from Giorgio's matlab script
-
     m <= parameter(:h, 0.5, (-5.0, 5.0), (-5., 5.), ModelConstructors.Untransformed(), Beta(0.5, 0.1), fixed = false,
                    description="h: habit formation parameter.",
                    tex_label = "h") # from Giorgio's matlab script
@@ -338,7 +333,7 @@ function init_parameters!(m::COTHANK)
     m <= parameter(:g_x, 0.18, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from Giorgio's MATLAB script
     m <= parameter(:v, 0.7, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
 
-    # new parameters with no given value, so current value is random placeholder
+    # the following parameters (from ζ to sx) are new but had no given value, so current value is random placeholder
     m <= parameter(:ζ, 0.75, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # ???
          # the above parameter appears as \varzeta in the final good producers equilibrium conditions
          # but no \varzeta unicode characters exists in Julia so we use \zeta instead
