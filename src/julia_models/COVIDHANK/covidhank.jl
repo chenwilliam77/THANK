@@ -588,6 +588,41 @@ function steadystate!(m::COTHANK)
     m[:mc1_ss]  = 1 / (m[:α] ^ m[:α] * (1 - m[:α]) ^ (1 - m[:α])) * m[:ρ_ss] ^ m[:α] * (m[:w1_ss]/ (m[:A2])) ^ (1 - m[:α]) # ???
 
 
+    function distSS(x)
+
+        c_H1 = x[1]
+        c_H2 = x[2]
+        c_S  = x[3]
+        λ_H1 = x[4]
+        λ_H2 = x[5]
+        λ_S  = x[6]
+        bR   = x[7]
+        R    = x[8]
+
+        r = zeros(8)
+
+        r[1] = m[:w1_ss] * m[:H1] - m[:t_H1_ss] + m[:τ_H1_ss] + R * bR * m[:f_S1] * (1 - m[:s]) / m[:θ] / m[:f_H1] / exp(m[:γ]) / m[:π_ss] - c_H1
+        r[2] = m[:w2_ss] * m[:H2] - m[:t_H2_ss] + m[:τ_H2_ss] + R * bR * (1 - m[:f_S1]) * (1 - m[:s]) / m[:θ] / m[:f_H1] / exp(m[:γ]) / m[:π_ss] - c_H2
+        r[3] = m[:c_ss] / (1 - m[:θ]) - m[:θ] * (m[:f_H1] * c_H1 + (1 - m[:f_H1]) * c_H2) / (1 - m[:θ]) - c_S
+
+        r[4] = exp(m[:γ]) / (exp(m[:γ]) - m[:h]) / c_H1 - λ_H1
+        r[5] = exp(m[:γ]) / (exp(m[:γ]) - m[:h]) / c_H2 - λ_H2
+        r[6] = exp(m[:γ]) / (exp(m[:γ]) - m[:h]) / c_S - λ_S
+
+        r[7] = (m[:g_ss] - m[:t_ss] + m[:τ_ss]) / (1 - R / exp(m[:γ]) / m[:π_ss]) - bR
+
+        r[8] = exp(m[:γ]) * m[:π_ss] / m[:β] * λ_S / (m[:s] * λ_S + (1 - m[:s]) * (m[:f_S1] * λ_H1 + (1 - m[:f_S1]) * λ_H2)) - R
+
+        return r
+    end
+
+    init = [m[:c_H1_ss].value m[:c_H2_ss].value m[:c_S_ss].value m[:λ_H1_ss].value m[:λ_H2_ss].value m[:λ_S_ss].value m[:bᴿ_ss].value m[:R_ss].value]
+    ss = nlsolve(distSS,init)
+
+    solution = ss.zero
+
+    m[:c_H1_ss], m[:c_H2_ss], m[:c_S_ss], m[:λ_H1_ss], m[:λ_H2_ss], m[:λ_S_ss], m[:bᴿ_ss], m[:R_ss] = solution
+
     return m
 end
 
