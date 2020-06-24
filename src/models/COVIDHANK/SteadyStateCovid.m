@@ -84,6 +84,7 @@ lambdas=ss(6);
 bR=ss(7);
 R=ss(8);
 
+save('steady_state_covid.mat', 'ss');
 
 function r=distSS(x)
 global w1 w2 H1 H2 th1 th2 tauh1 tauh2 c g t tau
