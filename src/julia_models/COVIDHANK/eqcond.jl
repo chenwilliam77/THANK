@@ -101,8 +101,10 @@ function eqcond(m::COTHANK)
     Γ0[eq[:eq_demand_good1], endo[:y2_t]] = -1
     Γ0[eq[:eq_demand_good1], endo[:π1_t]] = m[:ζ]
     Γ0[eq[:eq_demand_good1], endo[:π2_t]] = -m[:ζ]
+    Γ0[eq[:eq_demand_good1], endo[:d_t]] = 1
     Γ1[eq[:eq_demand_good1], endo[:y1_t]] = 1
     Γ1[eq[:eq_demand_good1], endo[:y2_t]] = -1
+    Γ0[eq[:eq_demand_good1], endo[:d_t]] = 1
 
     ### 4. Price Phillips Curve
 
@@ -194,7 +196,7 @@ function eqcond(m::COTHANK)
     Γ0[eq[:eq_euler], endo[:Ex_t]]    = m[:β] * m[:R_ss] / (expγ * m[:π_ss]) * m[:s] *
                                         (1. - m[:f_S1] * m[:λ_H1_ss] / m[:λ_S_ss] -
                                         (1. - m[:f_S1]) * m[:λ_H2_ss] / m[:λ_S_ss]) *
-                                        m[:s_x] / (m[:s] * m[:x_ss])
+                                        m[:s_x]
 #=
     # Flexible
     Γ0[eq[:eq_euler_f], endo[:λ_S_f_t]] = -1.
@@ -209,7 +211,7 @@ function eqcond(m::COTHANK)
     Γ0[eq[:eq_euler_f], endo[:Ex_f_t]] = m[:β] * m[:R_ss] / (expγ * m[:π_ss]) * m[:s] *
                                        (1. - m[:f_S1] * m[:λ_H1_ss] / m[:λ_S_ss] -
                                        (1. - m[:f_S1]) * m[:λ_H2_ss] / m[:λ_S_ss]) *
-                                       m[:s_x] / (m[:s] * m[:x_ss])
+                                       m[:s_x]
 =#
     # Sticky
     Γ0[eq[:eq_c_H1], endo[:c_H1_t]] = -1.
@@ -223,7 +225,7 @@ function eqcond(m::COTHANK)
                                        m[:R_ss] / (expγ * m[:π_ss]) * m[:bᴿ_ss] / m[:c_H1_ss]
     Γ0[eq[:eq_c_H1], endo[:x_t]]    = -m[:f_S1] * m[:s] / (m[:θ] * m[:f_H1]) *
                                        m[:R_ss] / (expγ * m[:π_ss]) * m[:bᴿ_ss] / m[:c_H1_ss] *
-                                       m[:s_x]/(m[:s]* m[:x_ss])
+                                       m[:s_x]
     Γ1[eq[:eq_c_H1], endo[:R_t]]    = -m[:f_S1] * (1. - m[:s]) / (m[:θ] * m[:f_H1]) *
                                        m[:R_ss] / (expγ * m[:π_ss]) * m[:bᴿ_ss] / m[:c_H1_ss]
     Γ1[eq[:eq_c_H1], endo[:bᴿ_t]]   = -m[:f_S1] * (1. - m[:s]) / (m[:θ] * m[:f_H1]) *
@@ -242,7 +244,7 @@ function eqcond(m::COTHANK)
                                         m[:R_ss] / (expγ * m[:π_ss]) * m[:bᴿ_ss] / m[:c_H1_ss]
     Γ0[eq[:eq_c_H1_f], endo[:x_f_t]] = -m[:f_S1] * m[:s] / (m[:θ] * m[:f_H1]) *
                                         m[:R_ss] / (expγ * m[:π_ss]) * m[:bᴿ_ss] / m[:c_H1_ss] *
-                                        m[:s_x]/(m[:s]*m[:x_ss])
+                                        m[:s_x]
     Γ1[eq[:eq_c_H1_f], endo[:R_f_t]] = -m[:f_S1] * (1 - m[:s]) / (m[:θ] * m[:f_H1]) *
                                         m[:R_ss] / (expγ * m[:π_ss]) * m[:bᴿ_ss] / m[:c_H1_ss]
     Γ1[eq[:eq_c_H1_f], endo[:bᴿ_f_t]] = -m[:f_S1] * (1 - m[:s]) / (m[:θ] * m[:f_H1]) *
@@ -261,7 +263,7 @@ function eqcond(m::COTHANK)
                                        m[:R_ss] / (expγ * m[:π_ss]) * m[:bᴿ_ss] / m[:c_H2_ss]
     Γ0[eq[:eq_c_H2], endo[:x_t]]    = -(1. - m[:f_S1]) * m[:s] / (m[:θ] * (1. - m[:f_H1])) *
                                        m[:R_ss] / (expγ * m[:π_ss]) * m[:bᴿ_ss] / m[:c_H2_ss] *
-                                       m[:s_x] / (m[:s] * m[:x_ss])
+                                       m[:s_x]
     Γ1[eq[:eq_c_H2], endo[:R_t]]    = -(1. - m[:f_S1]) * (1 - m[:s]) / (m[:θ] * (1. - m[:f_H1])) *
                                        m[:R_ss] / (expγ * m[:π_ss]) * m[:bᴿ_ss] / m[:c_H2_ss]
     Γ1[eq[:eq_c_H2], endo[:bᴿ_t]]    = -(1. - m[:f_S1]) * (1 - m[:s]) / (m[:θ] * (1. - m[:f_H1])) *
@@ -280,7 +282,7 @@ function eqcond(m::COTHANK)
                                         m[:R_ss] / (expγ * m[:π_ss]) * m[:bᴿ_ss] / m[:c_H2_ss]
     Γ0[eq[:eq_c_H2_f], endo[:x_f_t]] = -(1. - m[:f_S1]) * m[:s] / (m[:θ] * (1. - m[:f_H1])) *
                                         m[:R_ss] / (expγ * m[:π_ss]) * m[:bᴿ_ss] / m[:c_H2_ss] *
-                                        m[:s_x] / (m[:s] * m[:x_ss])
+                                        m[:s_x]
     Γ1[eq[:eq_c_H2_f], endo[:R_f_t]] = -(1. - m[:f_S1]) * (1 - m[:s]) / (m[:θ] * (1. - m[:f_H1])) *
                                         m[:R_ss] / (expγ * m[:π_ss]) * m[:bᴿ_ss] / m[:c_H2_ss]
     Γ1[eq[:eq_c_H2_f], endo[:bᴿ_f_t]] = -(1. - m[:f_S1]) * (1 - m[:s]) / (m[:θ] * (1. - m[:f_H1])) *
@@ -384,10 +386,10 @@ function eqcond(m::COTHANK)
     ### 8. Monetary and fiscal policy
     Γ0[eq[:eq_mp], endo[:R_t]]    = -1.
     Γ1[eq[:eq_mp], endo[:R_t]]    = -m[:ρ_R]
-    Γ0[eq[:eq_mp], endo[:π_t]]    = (1. - m[:ρ_R]) * m[:ψ_1]
-    Γ0[eq[:eq_mp], endo[:x_t]]    = (1. - m[:ρ_R]) * m[:ψ_3]
+    Γ0[eq[:eq_mp], endo[:π_t]]    = (1. - m[:ρ_R]) * m[:ϕ_1]
+    Γ0[eq[:eq_mp], endo[:x_t]]    = (1. - m[:ρ_R]) * m[:ϕ_3]
     Γ0[eq[:eq_mp], endo[:η_mp_t]] = 1.
-    Γ1[eq[:eq_mp], endo[:x_t]]    = (1. - m[:ρ_R]) * m[:ψ_3]
+    Γ1[eq[:eq_mp], endo[:x_t]]    = (1. - m[:ρ_R]) * m[:ϕ_3]
 
     Γ0[eq[:eq_revenue], endo[:t_t]]    = -1.
     Γ0[eq[:eq_revenue], endo[:t_S_t]]  = (1. - m[:θ])

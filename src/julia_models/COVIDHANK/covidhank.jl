@@ -302,15 +302,15 @@ function init_parameters!(m::COTHANK)
                    description="S′′: The investment adjust cost.",
                    tex_label = "S^{\\prime\\prime}") # from THANK
 
-    m <= parameter(:ψ_1, 2., (1e-5, 10.), (1e-5, 10.00), ModelConstructors.Exponential(), Normal(1.7, 0.3), fixed = false,
+    m <= parameter(:ϕ_1, 2., (1e-5, 10.), (1e-5, 10.00), ModelConstructors.Exponential(), Normal(1.7, 0.3), fixed = false,
                    description="ψ₁: Weight on inflation gap in monetary policy rule.",
                    tex_label = "\\psi_1") # from THANK
 
-    m <= parameter(:ψ_2, 0.1, (-0.5, 0.5), (-0.5, 0.5), ModelConstructors.Untransformed(), Normal(0.125, 0.05), fixed = false,
+    m <= parameter(:ϕ_2, 0.1, (-0.5, 0.5), (-0.5, 0.5), ModelConstructors.Untransformed(), Normal(0.125, 0.05), fixed = false,
                    description="ψ₂: Weight on output gap in monetary policy rule.",
                    tex_label = "\\psi_2") # from THANK
 
-    m <= parameter(:ψ_3, 0.25, (-0.5, 0.5), (-0.5, 0.5), ModelConstructors.Untransformed(), Normal(0.125, 0.05), fixed = false,
+    m <= parameter(:ϕ_3, 0.25, (-0.5, 0.5), (-0.5, 0.5), ModelConstructors.Untransformed(), Normal(0.125, 0.05), fixed = false,
 
                    description="ψ₃: Weight on ouptut growth in the monetary policy rule.",
                    tex_label = "\\psi_3") # from THANK
@@ -328,16 +328,17 @@ function init_parameters!(m::COTHANK)
     m <= parameter(:s, 0.995, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from Giorgio's MATLAB script
     m <= parameter(:g_x, 0.18, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from Giorgio's MATLAB script
     m <= parameter(:v, 0.7, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
+    m <= parameter(:ψ_H1, 0.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
+    m <= parameter(:ψ_H2, 0.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
 
     # the following parameters (from ζ to sx) are new but had no given value, so current value is random placeholder
-    m <= parameter(:ζ, 0.75, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # ???
+    m <= parameter(:ζ, 1.5, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # ???
          # the above parameter appears as \varzeta in the final good producers equilibrium conditions
          # but no \varzeta unicode characters exists in Julia so we use \zeta instead
-    m <= parameter(:ζ_X, 0.75, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # ???
-    m <= parameter(:ζ_G, 0.75, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # ???
-    m <= parameter(:ζ_B, 0.75, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # ???
-    m <= parameter(:s_x, 0.18, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # ???
-    m <= parameter(:sx, 0.18, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # ???
+    m <= parameter(:ζ_X, 0.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # ???
+    m <= parameter(:ζ_G, 0.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # ???
+    m <= parameter(:ζ_B, 1.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # ???
+    m <= parameter(:s_x, 0.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # ???
 
     # exogenous processes - autocorrelation
     m <= parameter(:ρ_R, 0.8, (0., 1.), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.6, 0.2), fixed = false,
@@ -533,8 +534,8 @@ function steadystate!(m::COTHANK)
 
     # Lines 553-595 are taken from Giorgio's MATLAB script for solving steady state, steady states that we
     # are unsure about are in lines 598-604
-    m[:ψ_H1]     = m[:θ] * m[:f_H1] / 1.1 # from Giorgio's MATLAB script for solving steady state
-    m[:ψ_H2]     = m[:θ] * (1 - m[:f_H1]) / 1.1 # from Giorgio's MATLAB script for solving steady state
+#    m[:ψ_H1]     = m[:θ] * m[:f_H1] / 1.1 # from Giorgio's MATLAB script for solving steady state
+#    m[:ψ_H2]     = m[:θ] * (1 - m[:f_H1]) / 1.1 # from Giorgio's MATLAB script for solving steady state
 
     m[:L1]   = ((1-m[:θ]) * m[:f_S1] + m[:θ] * m[:f_H1]) * m[:H1] # from Giorgio's MATLAB script for solving steady state
     m[:L2]   = ((1-m[:θ]) * (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) *m[:H2] # from Giorgio's MATLAB script for solving steady state
