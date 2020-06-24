@@ -18,8 +18,10 @@ A2=.7;
 v=.7;
 t_x=.2;
 tau_x=0;
-psih1=theta*fh1/1.1;
-psih2=theta*(1-fh1)/1.1;
+%psih1=theta*fh1/1.1;
+%psih2=theta*(1-fh1)/1.1;
+psih1 = 0;
+psih2 = 0;
 
 H1=1;
 H2=1;
