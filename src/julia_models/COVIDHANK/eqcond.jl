@@ -454,6 +454,7 @@ function eqcond(m::COTHANK)
     Γ0[eq[:eq_gdp], endo[:u_t]] = -m[:ρ_ss] * m[:k_ss] / m[:y_ss]
 
     ### 10. Exogenous processes
+# May need to re-sign these values b/c want positive MP shock (for example) to be raise in rates.
 
     # z
     Γ0[eq[:eq_z], endo[:z_t]] = 1

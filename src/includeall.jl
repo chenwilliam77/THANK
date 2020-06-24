@@ -1,4 +1,4 @@
-using DSGE, Distributions, HDF5, MAT, ModelConstructors, Nullables, OrderedCollections, Random
+using DSGE, Distributions, HDF5, MAT, ModelConstructors, NLsolve, Nullables, OrderedCollections, Random
 import DSGE: eqcond, measurement, init_observable_mappings!, init_pseudo_observable_mappings!,
     steadystate!, init_parameters!, init_subspec!, augment_states, model_settings!, description
 

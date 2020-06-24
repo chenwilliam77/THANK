@@ -470,9 +470,11 @@ function init_parameters!(m::COTHANK)
     m <= SteadyStateParameter(:β, NaN, tex_label = "\\beta")
     m <= SteadyStateParameter(:r_ss, NaN, tex_label = "r_ss")
     m <= SteadyStateParameter(:π_ss, NaN, tex_label = "\\pi_ss")
-     m <= SteadyStateParameter(:expγ, NaN, tex_label = "exp^\\gamma")
+    m <= SteadyStateParameter(:expγ, NaN, tex_label = "exp^\\gamma")
+#=
     m <= SteadyStateParameter(:ψ_H1, NaN, tex_label = "\\psi_H1")
     m <= SteadyStateParameter(:ψ_H2, NaN, tex_label = "\\psi_H2")
+=#
     m <= SteadyStateParameter(:L1, NaN, tex_label = "L1")
     m <= SteadyStateParameter(:L2, NaN, tex_label = "L2")
     m <= SteadyStateParameter(:ρ_ss, NaN, tex_label = "\\rho")
@@ -587,8 +589,7 @@ function steadystate!(m::COTHANK)
     m[:mc1_ss]  = 1 / (m[:α] ^ m[:α] * (1 - m[:α]) ^ (1 - m[:α])) * m[:ρ_ss] ^ m[:α] * m[:w1_ss] ^ (1 - m[:α]) # ???
     m[:mc1_ss]  = 1 / (m[:α] ^ m[:α] * (1 - m[:α]) ^ (1 - m[:α])) * m[:ρ_ss] ^ m[:α] * (m[:w1_ss]/ (m[:A2])) ^ (1 - m[:α]) # ???
 
-
-    function distSS(x)
+    function distSS!(r::AbstractVector{S}, x::AbstractVector{S}) where {S <: Real}
 
         c_H1 = x[1]
         c_H2 = x[2]
@@ -599,8 +600,7 @@ function steadystate!(m::COTHANK)
         bR   = x[7]
         R    = x[8]
 
-        r = zeros(8)
-
+        # Define residual in r
         r[1] = m[:w1_ss] * m[:H1] - m[:t_H1_ss] + m[:τ_H1_ss] + R * bR * m[:f_S1] * (1 - m[:s]) / m[:θ] / m[:f_H1] / exp(m[:γ]) / m[:π_ss] - c_H1
         r[2] = m[:w2_ss] * m[:H2] - m[:t_H2_ss] + m[:τ_H2_ss] + R * bR * (1 - m[:f_S1]) * (1 - m[:s]) / m[:θ] / m[:f_H1] / exp(m[:γ]) / m[:π_ss] - c_H2
         r[3] = m[:c_ss] / (1 - m[:θ]) - m[:θ] * (m[:f_H1] * c_H1 + (1 - m[:f_H1]) * c_H2) / (1 - m[:θ]) - c_S
@@ -616,8 +616,11 @@ function steadystate!(m::COTHANK)
         return r
     end
 
-    init = [m[:c_H1_ss].value m[:c_H2_ss].value m[:c_S_ss].value m[:λ_H1_ss].value m[:λ_H2_ss].value m[:λ_S_ss].value m[:bᴿ_ss].value m[:R_ss].value]
-    ss = nlsolve(distSS,init)
+    init = [m[:c_H1_ss].value, m[:c_H2_ss].value, m[:c_S_ss].value, m[:λ_H1_ss].value, m[:λ_H2_ss].value, m[:λ_S_ss].value,
+            m[:bᴿ_ss].value, m[:R_ss].value]
+    ss = nlsolve(distSS!, init)
+
+    @assert ss.f_converged "Steady state did not converge"
 
     solution = ss.zero
 
