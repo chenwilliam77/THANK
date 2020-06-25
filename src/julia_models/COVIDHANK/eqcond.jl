@@ -546,8 +546,7 @@ function eqcond(m::COTHANK)
 
     # z
     Γ0[eq[:eq_Ez], endo[:z_t]]  = -m[:ρ_z]
-    Γ0[eq[:eq_Ez], endo[:Ez_t]]  = 1
-    Π[eq[:eq_Ez],  ex[:Ez_sh]]  = 1.
+    Γ0[eq[:eq_Ez], endo[:Ez_t]] = 1.
 
     # λ_S
     Γ0[eq[:eq_Eλ_S], endo[:λ_S_t]]  = 1.
