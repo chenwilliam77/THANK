@@ -133,7 +133,7 @@ function eqcond(m::COTHANK)
     Γ0[eq[:eq_marg_utility_S], endo[:b_t]]   = 1.
     Γ0[eq[:eq_marg_utility_S], endo[:z_t]]   = -m[:h] / (expγ - m[:h])
     Γ0[eq[:eq_marg_utility_S], endo[:c_S_t]] = -expγ / (expγ - m[:h])
-    Γ1[eq[:eq_marg_utility_S], endo[:c_S_t]] = m[:h] / (expγ - m[:h])
+    Γ1[eq[:eq_marg_utility_S], endo[:c_S_t]] = -m[:h] / (expγ - m[:h])
 #=
     # Flexible
     Γ0[eq[:eq_marg_utility_S_f], endo[:λ_S_f_t]] = -1.
@@ -147,7 +147,7 @@ function eqcond(m::COTHANK)
     Γ0[eq[:eq_marg_utility_H1], endo[:b_t]]    = 1.
     Γ0[eq[:eq_marg_utility_H1], endo[:z_t]]    = -m[:h] / (expγ - m[:h])
     Γ0[eq[:eq_marg_utility_H1], endo[:c_H1_t]] = -expγ / (expγ - m[:h])
-    Γ1[eq[:eq_marg_utility_H1], endo[:c_H1_t]] = m[:h] / (expγ - m[:h])
+    Γ1[eq[:eq_marg_utility_H1], endo[:c_H1_t]] = -m[:h] / (expγ - m[:h])
 #=
     # Flexible
     Γ0[eq[:eq_marg_utility_H1_f], endo[:λ_H1_f_t]] = -1.
@@ -161,7 +161,7 @@ function eqcond(m::COTHANK)
     Γ0[eq[:eq_marg_utility_H2], endo[:b_t]]    = 1.
     Γ0[eq[:eq_marg_utility_H2], endo[:z_t]]    = -m[:h] / (expγ - m[:h])
     Γ0[eq[:eq_marg_utility_H2], endo[:c_H2_t]] = -expγ / (expγ - m[:h])
-    Γ1[eq[:eq_marg_utility_H2], endo[:c_H2_t]] = m[:h] / (expγ - m[:h])
+    Γ1[eq[:eq_marg_utility_H2], endo[:c_H2_t]] = -m[:h] / (expγ - m[:h])
 #=
     # Flexible
     Γ0[eq[:eq_marg_utility_H2_f], endo[:λ_H2_f_t]] = -1
