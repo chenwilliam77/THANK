@@ -552,7 +552,7 @@ function steadystate!(m::COTHANK)
 
     m[:klR1_ss] = m[:w1_ss] / m[:ρ_ss] * m[:α] / (1 - m[:α]) # from Giorgio's MATLAB script for solving steady state
     m[:klR2_ss] = m[:A2] * m[:klR1_ss] # from Giorgio's MATLAB script for solving steady state
-    m[:k_ss]    = m[:klR1_ss] * m[:L1] # from Giorgio's MATLAB script for solving steady state
+    m[:k_ss]    = m[:klR1_ss] * m[:L1] + m[:klR2_ss] * m[:L2] # from Giorgio's MATLAB script for solving steady state
 
     m[:F1_ss]   = m[:λ_p_ss] / (1 + m[:λ_p_ss]) * m[:L1] * m[:klR1_ss] ^ m[:α] # from Giorgio's MATLAB script for solving steady state
     m[:y1_ss]   = m[:L1] * m[:klR1_ss] ^ m[:α] - m[:F1_ss] # from Giorgio's MATLAB script for solving steady state
