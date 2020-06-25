@@ -119,9 +119,9 @@ Initializes indices for all of `m`'s states, shocks, and equilibrium conditions.
 function init_model_indices!(m::COTHANK)
     # Endogenous states
     endogenous_states = [:y_t, :y1_t, :y2_t, :k_t, :k_S_t, :L1_t,  :L2_t, :klR1_t, :klR2_t,   # check if missing ι terms
-                         :w1_t, :w2_t, :π_t, :π_S_t,  :π1_t, :π2_t, :mc1_t, :mc2_t, :λ_p_t, :λ_w_t,      # sticky prices
+                         :w1_t, :w2_t, :π_t, :π1_t, :π2_t, :mc1_t, :mc2_t, :λ_p_t, :λ_w_t,      # sticky prices
                          :λ_S_t, :λ_H1_t, :λ_H2_t, :λ_SH1_t, :λ_SH2_t, :c_t,  :c_H1_t, :c_H2_t, :c_S_t, :i_S_t,
-                         :R_t, :u_t, :ϕ_t, :z_t, :ρ_t, :a_t, :d_t, :x_t, :b_t, :t_t, :φ_t,
+                         :R_t, :u_t, :ϕ_t, :z_t, :ρ_t, :a_t, :d_t, :x_t, :b_t, :t_t, #:φ_t,
                          :g_t, :g_w1_t, :g_w2_t, :μ_t, :bᴿ_t, :η_mp_t, :t_S_t, :t_H1_t, :t_H2_t,
                          :τ_t, :τ_S_t, :τ_H1_t, :τ_H2_t, :Eπ_t, :Eπ1_t, :Eπ2_t, :Ez_t, :Eλ_S_t,
                          :Eλ_H1_t, :Eλ_H2_t, :Ex_t, :Eϕ_t, :Eρ_t, :Ei_S_t, :Ew1_t, :Ew2_t]
@@ -147,8 +147,9 @@ function init_model_indices!(m::COTHANK)
                               :eq_euler, :eq_c_H1, :eq_c_H2, :eq_cap_util, :eq_ϕ, :eq_i, :eq_cap_input, :eq_cap_accum, :eq_wage_phillips_good1,
                               :eq_marg_sub_good1, :eq_avg_marg_util_SH1, :eq_wage_phillips_good2, :eq_marg_sub_good2, :eq_avg_marg_util_SH2,
                               :eq_mp, :eq_revenue, :eq_transfer, :eq_realdebt, :eq_fiscal_rule, :eq_redistribute_H1, :eq_redistribute_H2,
-                              :eq_real_profits, :eq_cap_market_clear, :eq_goods_market_clear, :eq_gdp,
-                              :eq_z, :eq_a, :eq_d, :eq_φ, :eq_μ, :eq_b, :eq_λ_p, :eq_λ_w, :eq_η_mp, :eq_g, :eq_τ_S, :eq_τ_H1, :eq_τ_H2,
+                              #:eq_real_profits,
+                              :eq_cap_market_clear, :eq_goods_market_clear, :eq_gdp,
+                              :eq_z, :eq_a, :eq_d, :eq_μ, :eq_b, :eq_λ_p, :eq_λ_w, :eq_η_mp, :eq_g, :eq_τ_S, :eq_τ_H1, :eq_τ_H2, #eq_φ
                               :eq_Eπ, :eq_Eπ1, :eq_Eπ2, :eq_Ez, :eq_Eλ_S, :eq_Eλ_H1, :eq_Eλ_H2, :eq_Ex, :eq_Eϕ,
                               :eq_Eρ, :eq_Ei_S, :eq_Ew1, :eq_Ew2]
 #=
@@ -401,11 +402,11 @@ function init_parameters!(m::COTHANK)
                    description="ρ_T: parameter governing fiscal rule.", # Update this description later
                    tex_label = "\\rho_{R}") # ???
 
-    m <= parameter(:η_λ_p, 0.75, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.50, 0.20), fixed = false,
+    m <= parameter(:η_λ_p, 0.0, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.50, 0.20), fixed = false,
                    description="η_λ_p: Moving average component in the price markup shock.",
                    tex_label = "\\eta_{\\lambda_p}") # from THANK
 
-    m <= parameter(:η_λ_w, 0.95, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.50, 0.20), fixed = false,
+    m <= parameter(:η_λ_w, 0.0, (1e-5, 0.999), (1e-5, 0.999), ModelConstructors.SquareRoot(), Beta(0.50, 0.20), fixed = false,
                    description="η_λ_w: Moving average component in the wage markup shock.",
                    tex_label = "\\eta_{\\lambda_w}") # from THANK
 
@@ -470,6 +471,7 @@ function init_parameters!(m::COTHANK)
     m <= SteadyStateParameter(:β, NaN, tex_label = "\\beta")
     m <= SteadyStateParameter(:r_ss, NaN, tex_label = "r_ss")
     m <= SteadyStateParameter(:π_ss, NaN, tex_label = "\\pi_ss")
+    m <= SteadyStateParameter(:π_S_ss, NaN, tex_label = "\\pi_ss")
     m <= SteadyStateParameter(:expγ, NaN, tex_label = "exp^\\gamma")
 #=
     m <= SteadyStateParameter(:ψ_H1, NaN, tex_label = "\\psi_H1")
@@ -532,6 +534,7 @@ function steadystate!(m::COTHANK)
     m[:expγ]     = exp(m[:γ])
     m[:β]        = 0.99
     m[:π_ss]     = 1.02^(1/4)
+    m[:π_S_ss]   = 1.02^(1/4)
     m[:r_ss]     = exp(m[:γ]) / m[:β] - 1.
 
     # Lines 553-595 are taken from Giorgio's MATLAB script for solving steady state, steady states that we
@@ -587,7 +590,7 @@ function steadystate!(m::COTHANK)
     m[:λ_SH2_ss]= (1 - m[:θ]) * (1 - m[:f_S1]) / ((1 - m[:θ]) * (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) * m[:λ_S_ss] +
                        m[:θ] * (1 - m[:f_H1]) / ((1 - m[:θ]) * (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) * m[:λ_H2_ss] # ???
     m[:mc1_ss]  = 1 / (m[:α] ^ m[:α] * (1 - m[:α]) ^ (1 - m[:α])) * m[:ρ_ss] ^ m[:α] * m[:w1_ss] ^ (1 - m[:α]) # ???
-    m[:mc1_ss]  = 1 / (m[:α] ^ m[:α] * (1 - m[:α]) ^ (1 - m[:α])) * m[:ρ_ss] ^ m[:α] * (m[:w1_ss]/ (m[:A2])) ^ (1 - m[:α]) # ???
+    m[:mc2_ss]  = 1 / (m[:α] ^ m[:α] * (1 - m[:α]) ^ (1 - m[:α])) * m[:ρ_ss] ^ m[:α] * (m[:w1_ss]/ (m[:A2])) ^ (1 - m[:α]) # ???
 
     function distSS!(r::AbstractVector{S}, x::AbstractVector{S}) where {S <: Real}
 
@@ -602,7 +605,7 @@ function steadystate!(m::COTHANK)
 
         # Define residual in r
         r[1] = m[:w1_ss] * m[:H1] - m[:t_H1_ss] + m[:τ_H1_ss] + R * bR * m[:f_S1] * (1 - m[:s]) / m[:θ] / m[:f_H1] / exp(m[:γ]) / m[:π_ss] - c_H1
-        r[2] = m[:w2_ss] * m[:H2] - m[:t_H2_ss] + m[:τ_H2_ss] + R * bR * (1 - m[:f_S1]) * (1 - m[:s]) / m[:θ] / m[:f_H1] / exp(m[:γ]) / m[:π_ss] - c_H2
+        r[2] = m[:w2_ss] * m[:H2] - m[:t_H2_ss] + m[:τ_H2_ss] + R * bR * (1 - m[:f_S1]) * (1 - m[:s]) / m[:θ] /(1-m[:f_H1]) / exp(m[:γ]) / m[:π_ss] - c_H2
         r[3] = m[:c_ss] / (1 - m[:θ]) - m[:θ] * (m[:f_H1] * c_H1 + (1 - m[:f_H1]) * c_H2) / (1 - m[:θ]) - c_S
 
         r[4] = exp(m[:γ]) / (exp(m[:γ]) - m[:h]) / c_H1 - λ_H1

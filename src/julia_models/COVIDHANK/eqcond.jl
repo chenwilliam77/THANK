@@ -104,7 +104,7 @@ function eqcond(m::COTHANK)
     Γ0[eq[:eq_demand_good1], endo[:d_t]] = 1
     Γ1[eq[:eq_demand_good1], endo[:y1_t]] = 1
     Γ1[eq[:eq_demand_good1], endo[:y2_t]] = -1
-    Γ0[eq[:eq_demand_good1], endo[:d_t]] = 1
+    Γ1[eq[:eq_demand_good1], endo[:d_t]] = 1
 
     ### 4. Price Phillips Curve
 
@@ -315,7 +315,7 @@ function eqcond(m::COTHANK)
     Γ0[eq[:eq_cap_input], endo[:k_t]]   = -1.
     Γ0[eq[:eq_cap_input], endo[:u_t]]   = 1.
     Γ0[eq[:eq_cap_input], endo[:z_t]]   = -1.
-    Γ1[eq[:eq_cap_input], endo[:k_S_t]] = -1.
+    Γ1[eq[:eq_cap_input], endo[:k_S_t]] = 1.
 
     Γ0[eq[:eq_cap_accum], endo[:k_S_t]] = 1.
     Γ0[eq[:eq_cap_accum], endo[:z_t]]   = (1. - m[:δ]) * exp(-m[:γ])
@@ -385,7 +385,7 @@ function eqcond(m::COTHANK)
 
     ### 8. Monetary and fiscal policy
     Γ0[eq[:eq_mp], endo[:R_t]]    = -1.
-    Γ1[eq[:eq_mp], endo[:R_t]]    = -m[:ρ_R]
+    Γ1[eq[:eq_mp], endo[:R_t]]    = m[:ρ_R]
     Γ0[eq[:eq_mp], endo[:π_t]]    = (1. - m[:ρ_R]) * m[:ϕ_1]
     Γ0[eq[:eq_mp], endo[:x_t]]    = (1. - m[:ρ_R]) * m[:ϕ_3]
     Γ0[eq[:eq_mp], endo[:η_mp_t]] = 1.
@@ -470,12 +470,12 @@ function eqcond(m::COTHANK)
     Γ0[eq[:eq_d], endo[:d_t]] = 1.
     Γ1[eq[:eq_d], endo[:d_t]] = m[:ρ_d]
     Ψ[eq[:eq_d],  exo[:d_sh]] = 1.
-
+#=
     # φ
     Γ0[eq[:eq_φ], endo[:φ_t]] = 1.
     Γ1[eq[:eq_φ], endo[:φ_t]] = m[:ρ_φ]
     Ψ[eq[:eq_φ],  exo[:φ_sh]] = 1.
-
+=#
     # μ
     Γ0[eq[:eq_μ], endo[:μ_t]] = 1.
     Γ1[eq[:eq_μ], endo[:μ_t]] = m[:ρ_μ]

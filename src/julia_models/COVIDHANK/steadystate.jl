@@ -18,9 +18,10 @@ A2   = 0.7
 v    = 0.7
 t_x  = 0.2
 τ_x  = 0
-ψ_h1 = θ * f_h1 / 1.1
-ψ_h2 = θ * (1 - f_h1) / 1.1
-
+#ψ_h1 = θ * f_h1 / 1.1
+#ψ_h2 = θ * (1 - f_h1) / 1.1
+ψ_h1 = 0
+ψ_h2 = 0
 H1   = 1
 H2   = 1
 
@@ -67,7 +68,7 @@ c_s0  = c / (1 - θ)
 bR0   = (g - t + τ) / (1 - (1.025 / 4) / exp(γ) / π_ss)
 R0    = (1.025 / 4)
 
-function distSS!(x)
+function distSS(x)
 global w1, w2, H1, H2, th1, th2, τ_h1, τ_h2, c, g, t, τ
 global s, θ, f_h1, f_s1, γ, π_ss, h, disc
 
@@ -100,7 +101,7 @@ end
 
 
 init = [c_h10 c_h20 c_s0 λ_h10 λ_h20 λ_s0 bR0 R0]
-ss = nlsolve(distSS, init, autodiff = :forward)
+ss = nlsolve(distSS, init)
 
 solution = ss.zero
 
