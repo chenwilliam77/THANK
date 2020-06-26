@@ -123,8 +123,8 @@ function init_model_indices!(m::COTHANK)
                          :λ_S_t, :λ_H1_t, :λ_H2_t, :λ_SH1_t, :λ_SH2_t, :c_t,  :c_H1_t, :c_H2_t, :c_S_t, :i_S_t,
                          :R_t, :u_t, :ϕ_t, :z_t, :ρ_t, :a_t, :d_t, :x_t, :b_t, :t_t, #:φ_t,
                          :g_t, :g_w1_t, :g_w2_t, :μ_t, :bᴿ_t, :η_mp_t, :t_S_t, :t_H1_t, :t_H2_t,
-                         :τ_t, :τ_S_t, :τ_H1_t, :τ_H2_t, :Eπ_t, :Eπ1_t, :Eπ2_t, :Ez_t, :Eλ_S_t,
-                         :Eλ_H1_t, :Eλ_H2_t, :Ex_t, :Eϕ_t, :Eρ_t, :Ei_S_t, :Ew1_t, :Ew2_t]
+                         :τ_t, :τ_S_t, :τ_H1_t, :τ_H2_t, :Eπ1_t, :Eπ2_t, :Eλ_S_t,
+                         :Eλ_H1_t, :Eλ_H2_t, :Ex_t, :Eϕ_t, :Eρ_t, :Ei_S_t, :Ew1_t, :eπ_t, :Ew2_t]
                                                                                 # CHECK BACK IF ANY CAN BE AUGMENTED VARIABLES
 #=                         :y_f_t, :k_f_t, :L_f_t, :Rk_f_t, :w_f_t, :mc_f_t,       # flexible prices
                          :λ_f_t, :c_f_t, :R_f_t, :u_f_t, :ϕ_f_t,
@@ -133,12 +133,12 @@ function init_model_indices!(m::COTHANK)
                          :t_h_f_t, :Ey_f_t, :Eλ_h_f_t, :Eλ_s_f_t]
 =#
     # Exogenous shocks
-    exogenous_shocks = [:z_sh, :a_sh, :d_sh, :φ_sh, :μ_sh, :b_sh, :λ_p_sh, :λ_w_sh, :η_mp_sh, :g_sh,
-                        :τ_S_sh, :τ_H1_sh, :τ_H2_sh]
+    exogenous_shocks = [:a_sh, :d_sh, :λ_p_sh, :b_sh, :z_sh, :τ_H1_sh, :τ_H2_sh, :μ_sh, :λ_w_sh,
+                        :τ_S_sh, :η_mp_sh, :g_sh]
 
     # Expectations shocks
-    expected_shocks = [:Eπ_sh, :Eπ1_sh, :Eπ2_sh, :Ez_sh, :Eλ_S_sh, :Eλ_H1_sh, :Eλ_H2_sh,
-                       :Ex_sh, :Eϕ_sh, :Eρ_sh, :Ei_S_sh, :Ew1_sh, :Ew2_sh] # sticky prices
+    expected_shocks = [:Eπ1_sh, :Eπ2_sh, :Eλ_S_sh, :Eλ_H1_sh, :Eλ_H2_sh,
+                       :Ex_sh, :Eϕ_sh, :Eρ_sh, :Ei_S_sh, :Ew1_sh, :Eπ_sh, :Ew2_sh] # sticky prices
 
     # Equilibrium conditions
     equilibrium_conditions = [:eq_KL_ratio_good1, :eq_mc_good1, :eq_KL_ratio_good2, :eq_mc_good2, :eq_production_good1, :eq_production_good2,
@@ -585,13 +585,12 @@ function steadystate!(m::COTHANK)
     m[:bᴿ_ss]   = (m[:g_ss] - m[:t_ss] + m[:τ_ss]) / (1 - m[:R_ss] / exp(m[:γ]) / m[:π_ss]) # from Giorgio's MATLAB script for solving steady state
 
     # PROBLEM STEADY STATES
-    m[:λ_SH1_ss]= (1 - m[:θ]) * m[:f_S1] / ((1 - m[:θ]) * m[:f_S1] + m[:θ] * m[:f_H1]) * m[:λ_S_ss] +
-                       m[:θ] * m[:f_H1] / ((1 - m[:θ]) * m[:f_S1] + m[:θ] * m[:f_H1]) * m[:λ_H1_ss] # ???
-    m[:λ_SH2_ss]= (1 - m[:θ]) * (1 - m[:f_S1]) / ((1 - m[:θ]) * (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) * m[:λ_S_ss] +
-                       m[:θ] * (1 - m[:f_H1]) / ((1 - m[:θ]) * (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) * m[:λ_H2_ss] # ???
-    m[:mc1_ss]  = 1 / (m[:α] ^ m[:α] * (1 - m[:α]) ^ (1 - m[:α])) * m[:ρ_ss] ^ m[:α] * m[:w1_ss] ^ (1 - m[:α]) # ???
-    m[:mc2_ss]  = 1 / (m[:α] ^ m[:α] * (1 - m[:α]) ^ (1 - m[:α])) * m[:ρ_ss] ^ m[:α] * (m[:w1_ss]/ (m[:A2])) ^ (1 - m[:α]) # ???
+    m[:mc1_ss]  = m[:ρ_ss] ^ m[:α] * m[:w1_ss] ^ (1 - m[:α]) / (m[:α] ^ m[:α] * (1 - m[:α]) ^ (1 - m[:α]))
+    m[:mc2_ss]  = m[:ρ_ss] ^ m[:α] * (m[:w2_ss] / m[:A2]) ^ (1 - m[:α]) / (m[:α] ^ m[:α] * (1 - m[:α]) ^ (1 - m[:α]))
+    m[:π_S_ss]  = (m[:y_ss] - m[:mc1_ss] * m[:L1_ss] * m[:klR1_ss] ^ m[:α] - m[:mc2_ss] * m[:L2_ss] * m[:klR2_ss] ^ m[:α] * m[:A2] ^
+                      (1 - m[:α])) / (1 - m[:θ])
 
+    # function to compute residuals for solving system of nonlinear equations
     function distSS!(r::AbstractVector{S}, x::AbstractVector{S}) where {S <: Real}
 
         c_H1 = x[1]
@@ -629,6 +628,10 @@ function steadystate!(m::COTHANK)
 
     m[:c_H1_ss], m[:c_H2_ss], m[:c_S_ss], m[:λ_H1_ss], m[:λ_H2_ss], m[:λ_S_ss], m[:bᴿ_ss], m[:R_ss] = solution
 
+    m[:λ_SH1_ss] = (1 - m[:θ]) * m[:f_S1] / ((1 - m[:θ]) * m[:f_S1] + m[:θ] * m[:f_H1]) * m[:λ_S_ss] + m[:θ] *
+                       m[:f_H1] / ((1 - m[:θ]) * m[:f_S1] + m[:θ] * m[:f_H1]) * m[:λ_H1_ss]
+    m[:λ_SH2_ss] = (1 - m[:θ]) * (1 - m[:f_S1]) / ((1 - m[:θ]) * (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1]) * m[:λ_S_ss] +
+                       m[:θ] * (1 - m[:f_H1]) / ((1 - m[:θ]) * (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) * m[:λ_H2_ss]
     return m
 end
 

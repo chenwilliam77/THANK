@@ -186,7 +186,7 @@ function eqcond(m::COTHANK)
     # Sticky
     Γ0[eq[:eq_euler], endo[:λ_S_t]]   = -1. # Euler equation also pins down the bonds demand/self-insurance motive
     Γ0[eq[:eq_euler], endo[:R_t]]     = 1.
-    Γ0[eq[:eq_euler], endo[:Ez_t]]    = -1.
+    Γ0[eq[:eq_euler], endo[:z_t]]    = -m[:ρ_z].
     Γ0[eq[:eq_euler], endo[:Eπ_t]]    = -1.
     Γ0[eq[:eq_euler], endo[:Eλ_S_t]]  = m[:β] * m[:R_ss] / (expγ * m[:π_ss]) * m[:s]
     Γ0[eq[:eq_euler], endo[:Eλ_H1_t]] =  m[:β] * m[:R_ss] / (expγ * m[:π_ss]) *
@@ -299,7 +299,7 @@ function eqcond(m::COTHANK)
 
     Γ0[eq[:eq_ϕ], endo[:ϕ_t]]    = -1.
     Γ0[eq[:eq_ϕ], endo[:Eϕ_t]]   = (1. - m[:δ]) * m[:β] * exp(-m[:γ])
-    Γ0[eq[:eq_ϕ], endo[:Ez_t]]   = -1.
+    Γ0[eq[:eq_ϕ], endo[:z_t]]   = -m[:ρ_z].
     Γ0[eq[:eq_ϕ], endo[:Eλ_S_t]] = (1. - (1. - m[:δ]) * m[:β] * exp(-m[:γ]))
     Γ0[eq[:eq_ϕ], endo[:Eρ_t]]   = (1. - (1. - m[:δ]) * m[:β] * exp(-m[:γ]))
 
@@ -307,9 +307,8 @@ function eqcond(m::COTHANK)
     Γ0[eq[:eq_i], endo[:ϕ_t]]    = 1.
     Γ0[eq[:eq_i], endo[:μ_t]]    = 1.
     Γ0[eq[:eq_i], endo[:i_S_t]]  = -exp(2. * m[:γ]) * m[:S′′] * (1. + m[:β])
-    Γ0[eq[:eq_i], endo[:z_t]]    = -exp(2. * m[:γ]) * m[:S′′]
+    Γ0[eq[:eq_i], endo[:z_t]]    = -exp(2. * m[:γ]) * m[:S′′] * (1 - m[:β] * m[:ρ_z])
     Γ0[eq[:eq_i], endo[:Ei_S_t]] = m[:β] * exp(2. * m[:γ]) * m[:S′′]
-    Γ0[eq[:eq_i], endo[:Ez_t]]   = m[:β] * exp(2. * m[:γ]) * m[:S′′]
     Γ1[eq[:eq_i], endo[:i_S_t]]  = -exp(2. * m[:γ]) * m[:S′′]
 
     Γ0[eq[:eq_cap_input], endo[:k_t]]   = -1.
@@ -401,6 +400,7 @@ function eqcond(m::COTHANK)
     Γ0[eq[:eq_transfer], endo[:τ_H1_t]] = m[:θ] * m[:f_H1]
     Γ0[eq[:eq_transfer], endo[:τ_H2_t]] = m[:θ] * (1. - m[:f_H1])
 
+#=
     Γ0[eq[:eq_realdebt], endo[:bᴿ_t]] = m[:x_ss] / m[:bᴿ_ss]
     Γ0[eq[:eq_realdebt], endo[:π_t]]  = m[:R_ss] / (expγ * m[:π_ss])
     Γ0[eq[:eq_realdebt], endo[:z_t]]  = m[:R_ss] / (expγ * m[:π_ss])
@@ -409,9 +409,18 @@ function eqcond(m::COTHANK)
     Γ0[eq[:eq_realdebt], endo[:τ_t]]  = -(1. - m[:R_ss] / (expγ * m[:π_ss])) * m[:x_ss] / (m[:g_ss] - m[:t_ss] + m[:τ_ss])
     Γ1[eq[:eq_realdebt], endo[:R_t]]  = m[:R_ss] / (expγ * m[:π_ss])
     Γ1[eq[:eq_realdebt], endo[:bᴿ_t]] = m[:R_ss] / (expγ * m[:π_ss]) * m[:x_ss] / m[:bᴿ_ss]
+=#
+    Γ0[eq[:eq_realdebt], endo[:bᴿ_t]] = m[:x_ss] * (m[:g_ss] - m[:t_ss] + m[:τ_ss])
+    Γ0[eq[:eq_realdebt], endo[:π_t]]  = m[:R_ss] / (expγ * m[:π_ss]) * m[:bᴿ_ss] * (m[:g_ss] - m[:t_ss] + m[:τ_ss])
+    Γ0[eq[:eq_realdebt], endo[:z_t]]  = m[:R_ss] / (expγ * m[:π_ss]) 8 m[:bᴿ_ss] * (m[:g_ss] - m[:t_ss] + m[:τ_ss])
+    Γ0[eq[:eq_realdebt], endo[:g_t]]  = -(1. - m[:R_ss] / (expγ * m[:π_ss])) * m[:x_ss] * m[:bᴿ_ss]
+    Γ0[eq[:eq_realdebt], endo[:t_t]]  = (1. - m[:R_ss] / (expγ * m[:π_ss])) * m[:x_ss]  * m[:bᴿ_ss]
+    Γ0[eq[:eq_realdebt], endo[:τ_t]]  = -(1. - m[:R_ss] / (expγ * m[:π_ss])) * m[:x_ss] * m[:bᴿ_ss]
+    Γ1[eq[:eq_realdebt], endo[:R_t]]  = m[:R_ss] / (expγ * m[:π_ss]) * m[:bᴿ_ss] * (m[:g_ss] - m[:t_ss] + m[:τ_ss])
+    Γ1[eq[:eq_realdebt], endo[:bᴿ_t]] = m[:R_ss] / (expγ * m[:π_ss]) * m[:x_ss] * (m[:g_ss] - m[:t_ss] + m[:τ_ss])
 
     Γ0[eq[:eq_fiscal_rule], endo[:t_t]] = -m[:x_ss] / m[:t_ss]
-    Γ0[eq[:eq_fiscal_rule], endo[:x_t]] = (1. + (1. - m[:ρ_T]) * m[:ζ_X] + (1. - m[:ρ_T]) * m[:ζ_G])
+    Γ0[eq[:eq_fiscal_rule], endo[:x_t]] = (1. + (1. - m[:ρ_T]) * m[:ζ_X] - (1. - m[:ρ_T]) * m[:ζ_G])
     Γ0[eq[:eq_fiscal_rule], endo[:g_t]] = (1. - m[:ρ_T]) * m[:ζ_G] * m[:x_ss] / m[:g_ss]
     Γ1[eq[:eq_fiscal_rule], endo[:t_t]] = -m[:ρ_T] * m[:x_ss] / m[:t_ss]
     Γ1[eq[:eq_fiscal_rule], endo[:bᴿ_t]] = -(1. - m[:ρ_T]) * m[:ζ_B]  * m[:x_ss] / m[:bᴿ_ss]
@@ -425,7 +434,7 @@ function eqcond(m::COTHANK)
 
     ### 9. Market clearing and aggregate resource constraint
     # commenting out following eq condition b/c of presence of π_S_ss, unsure of parameter's meaning
-#=    Γ0[eq[:eq_real_profits], endo[:π_S_t]]  = -1.
+    Γ0[eq[:eq_real_profits], endo[:π_S_t]]  = -1.
     Γ0[eq[:eq_real_profits], endo[:y_t]]    = m[:y_ss] / ((1. - m[:θ]) * m[:π_S_ss])
     Γ0[eq[:eq_real_profits], endo[:mc1_t]]  = -m[:mc1_ss] * m[:klR1_ss] * m[:L1] / ((1. - m[:θ]) * m[:π_S_ss])
     Γ0[eq[:eq_real_profits], endo[:klR1_t]] = -m[:mc1_ss] * m[:klR1_ss] * m[:L1] / ((1. - m[:θ]) * m[:π_S_ss])
@@ -436,7 +445,7 @@ function eqcond(m::COTHANK)
                                                ((1. - m[:θ]) * m[:π_S_ss])
     Γ0[eq[:eq_real_profits], endo[:L2_t]]   = -m[:A2] ^ (1. - m[:α]) * m[:mc2_ss] * m[:klR2_ss] * m[:L2] /
                                                ((1. - m[:θ]) * m[:π_S_ss])
-=#
+
     Γ0[eq[:eq_cap_market_clear], endo[:klR1_t]] = m[:klR1_ss] * m[:L1] / m[:k_ss]
     Γ0[eq[:eq_cap_market_clear], endo[:L1_t]]   = m[:klR1_ss] * m[:L1] / m[:k_ss]
     Γ0[eq[:eq_cap_market_clear], endo[:klR2_t]] = m[:klR2_ss] * m[:L2] / m[:k_ss]
