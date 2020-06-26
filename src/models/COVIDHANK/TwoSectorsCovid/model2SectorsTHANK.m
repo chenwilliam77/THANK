@@ -132,10 +132,52 @@ Nex        = 12; % total number of expectational errors
 SteadyState;
 
 % put steady state values into a vector and save
-ssvec = [gam disc 0 pss pSss exp(gam) L1ss L2ss Rkss w1ss w2ss ...
+ssvec = [gam disc 1 pss pSss exp(gam) L1ss L2ss Rkss w1ss w2ss ...
          klr1ss klr2ss kss F1 y1ss yss y2ss F2 xss iSss gss css ...
          tauss tauH1ss tauH2ss tauSss tss tH1ss tH2ss tSss cH1ss ...
          cH2ss cSss lambdaH1ss lambdaH2ss lambdaSss lambdaSH1ss lambdaSH2ss bRss Rss mc1ss mc2ss];
+println(gam)
+println( disc)
+println( pss)
+println(pSss)
+println(exp(gam))
+println(L1ss)
+println(L2ss)
+println(Rkss)
+println(w1ss)
+println(w2ss)
+println(klr1ss)
+println(klr2ss)
+println(kss)
+println(F1)
+println(y1ss)
+println(yss)
+println(y2ss)
+println(F2)
+println(xss)
+println(iSss)
+println(gss)
+println(css)
+println(tauss)
+println(tauH1ss)
+println(tauH2ss)
+println(tauSss)
+println(tss)
+println(tH1ss)
+println(tH2ss)
+println(tSss)
+println(cH1ss)
+println(cH2ss)
+println(cSss)
+println(lambdaH1ss)
+println(lambdaH2ss)
+println(lambdaSss)
+println(lambdaSH1ss)
+println(lambdaSH2ss)
+println(bRss)
+println(Rss)
+println(mc1ss)
+println(mc2ss)
 
 % -------------------------------------------------------------------------
 % System Matrices
