@@ -64,29 +64,28 @@ tau         = 48;   % transfers
 tauS        = 49; % transfer shock (S-type HHs)
 tauH1       = 50;  % transfer shock (H1-type HHs)
 tauH2       = 51;  % transfer shock (H2-type HHs)
-
+pS          = 52;
 
 % "expectation" variables
-ep1         = 52;
-ep2         = 53;
-elambdaS    = 54;
-elambdaH1   = 55;
-elambdaH2   = 56;
-ex          = 57;
-ephi        = 58;
-eRk         = 59;
-eiS         = 60;
-ew1         = 61;
-ep          = 62;
-ew2         = 63;
+ep1         = 53;
+ep2         = 54;
+elambdaS    = 55;
+elambdaH1   = 56;
+elambdaH2   = 57;
+ex          = 58;
+ephi        = 59;
+eRk         = 60;
+eiS         = 61;
+ew1         = 62;
+ep          = 63;
+ew2         = 64;
 
-lastvar     = 63;
+Nx= 64;
 
 % exogenous processes
 
 
 
-Nx          = lastvar + 12; % total number of endogenous variables
 
 
 % -------------------------------------------------------------------------
@@ -135,8 +134,8 @@ SteadyState;
 % put steady state values into a vector and save
 ssvec = [gam disc 0 pss pSss exp(gam) L1ss L2ss Rkss w1ss w2ss ...
          klr1ss klr2ss kss F1 y1ss yss y2ss F2 xss iSss gss css ...
-         tauss tauH1ss tauH2ss tauSss tss tH1ss tH2ss tSss cH10 ...
-         cH20 cS0 lambdaH10 lambdaH20 lambdaS0 bR0 R0 mc1ss mc2ss];
+         tauss tauH1ss tauH2ss tauSss tss tH1ss tH2ss tSss cH1ss ...
+         cH2ss cSss lambdaH1ss lambdaH2ss lambdaSss lambdaSH1ss lambdaSH2ss bRss Rss mc1ss mc2ss];
 
 % -------------------------------------------------------------------------
 % System Matrices
