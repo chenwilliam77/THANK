@@ -473,8 +473,8 @@ GAM0(62,w1) = 1; GAM1(62,ew1) = 1; PPI(62,w1ex) = 1;
 GAM0(63,p) = 1; GAM1(63,ep) = 1; PPI(63,pex) = 1;
 GAM0(64,w2) = 1; GAM1(64,ew2) = 1; PPI(64,w2ex) = 1;
 
-save('eqcond.mat', 'ssvec','GAM0','GAM1', 'C', 'PSI', 'PI');
+save('eqcond.mat', 'ssvec','GAM0','GAM1', 'C', 'PSI', 'PPI');
 % -------------------------------------------------------------------------
 % Solution of the RE system of equations using Chris Sims' Gensys
 % -------------------------------------------------------------------------
-[G1, C, impact, fmat, fwt, ywt, gev, eu] = GENSYS(GAM0, GAM1, C, PSI, PPI);
+[G1, C, impact, fmat, fwt, ywt, gev, eu] = gensys(GAM0, GAM1, C, PSI, PPI);
