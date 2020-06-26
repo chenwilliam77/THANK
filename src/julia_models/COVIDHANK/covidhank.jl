@@ -123,8 +123,8 @@ function init_model_indices!(m::COTHANK)
                          :λ_S_t, :λ_H1_t, :λ_H2_t, :λ_SH1_t, :λ_SH2_t, :c_t,  :c_H1_t, :c_H2_t, :c_S_t, :i_S_t,
                          :R_t, :u_t, :ϕ_t, :z_t, :ρ_t, :a_t, :d_t, :x_t, :b_t, :t_t, #:φ_t,
                          :g_t, :g_w1_t, :g_w2_t, :μ_t, :bᴿ_t, :η_mp_t, :t_S_t, :t_H1_t, :t_H2_t,
-                         :τ_t, :τ_S_t, :τ_H1_t, :τ_H2_t, :Eπ1_t, :Eπ2_t, :Eλ_S_t,
-                         :Eλ_H1_t, :Eλ_H2_t, :Ex_t, :Eϕ_t, :Eρ_t, :Ei_S_t, :Ew1_t, :eπ_t, :Ew2_t]
+                         :τ_t, :τ_S_t, :τ_H1_t, :τ_H2_t, :π_S_t, :Eπ1_t, :Eπ2_t, :Eλ_S_t,
+                         :Eλ_H1_t, :Eλ_H2_t, :Ex_t, :Eϕ_t, :Eρ_t, :Ei_S_t, :Ew1_t, :Eπ_t, :Ew2_t]
                                                                                 # CHECK BACK IF ANY CAN BE AUGMENTED VARIABLES
 #=                         :y_f_t, :k_f_t, :L_f_t, :Rk_f_t, :w_f_t, :mc_f_t,       # flexible prices
                          :λ_f_t, :c_f_t, :R_f_t, :u_f_t, :ϕ_f_t,
@@ -147,10 +147,10 @@ function init_model_indices!(m::COTHANK)
                               :eq_euler, :eq_c_H1, :eq_c_H2, :eq_cap_util, :eq_ϕ, :eq_i, :eq_cap_input, :eq_cap_accum, :eq_wage_phillips_good1,
                               :eq_marg_sub_good1, :eq_avg_marg_util_SH1, :eq_wage_phillips_good2, :eq_marg_sub_good2, :eq_avg_marg_util_SH2,
                               :eq_mp, :eq_revenue, :eq_transfer, :eq_realdebt, :eq_fiscal_rule, :eq_redistribute_H1, :eq_redistribute_H2,
-                              #:eq_real_profits,
+                              :eq_real_profits,
                               :eq_cap_market_clear, :eq_goods_market_clear, :eq_gdp,
                               :eq_z, :eq_a, :eq_d, :eq_μ, :eq_b, :eq_λ_p, :eq_λ_w, :eq_η_mp, :eq_g, :eq_τ_S, :eq_τ_H1, :eq_τ_H2, #eq_φ
-                              :eq_Eπ, :eq_Eπ1, :eq_Eπ2, :eq_Ez, :eq_Eλ_S, :eq_Eλ_H1, :eq_Eλ_H2, :eq_Ex, :eq_Eϕ,
+                              :eq_Eπ, :eq_Eπ1, :eq_Eπ2, :eq_Eλ_S, :eq_Eλ_H1, :eq_Eλ_H2, :eq_Ex, :eq_Eϕ,
                               :eq_Eρ, :eq_Ei_S, :eq_Ew1, :eq_Ew2]
 #=
                               :eq_y_f, :eq_k_f, :eq_L_f, :eq_Rk_f, :eq_w_f, :eq_mc_f,       # flexible prices
@@ -575,19 +575,19 @@ function steadystate!(m::COTHANK)
     m[:t_H2_ss] = m[:t_ss] * m[:ψ_H2] / m[:θ] / (1 - m[:f_H1]) # from Giorgio's MATLAB script for solving steady state
     m[:t_S_ss]  = (m[:t_ss] - m[:θ] * ( m[:f_H1] * m[:t_H1_ss] + (1 - m[:f_H1]) * m[:t_H2_ss])) / (1 - m[:θ]) # from Giorgio's MATLAB script for solving steady state
 
-    m[:c_H1_ss] = m[:c_ss] / m[:θ] / m[:f_H1] # from Giorgio's MATLAB script for solving steady state
-    m[:c_H2_ss] = m[:c_ss] / m[:θ] / (1 - m[:f_H1]) # from Giorgio's MATLAB script for solving steady state
-    m[:c_S_ss]  = m[:c_ss] / (1 - m[:θ]) # from Giorgio's MATLAB script for solving steady state
-    m[:λ_H1_ss] = exp(m[:γ]) / (exp(m[:γ]) * m[:c_H1_ss] - m[:h] * m[:c_ss]) # from Giorgio's MATLAB script for solving steady state
-    m[:λ_H2_ss] = exp(m[:γ]) / (exp(m[:γ]) * m[:c_H2_ss] - m[:h] * m[:c_ss]) # from Giorgio's MATLAB script for solving steady state
-    m[:λ_S_ss]  = exp(m[:γ]) / (exp(m[:γ]) *m[:c_S_ss] - m[:h] * m[:c_ss]) # from Giorgio's MATLAB script for solving steady state
+    m[:c_H1_ss] = m[:w1_ss] * m[:H1] - m[:t_H1_ss] + m[:τ_H1_ss] # from Giorgio's MATLAB script for solving steady state
+    m[:c_H2_ss] =  m[:w2_ss] * m[:H2] - m[:t_H2_ss] + m[:τ_H2_ss] # from Giorgio's MATLAB script for solving steady state
+    m[:c_S_ss]  = (m[:c_ss] - m[:c_H1_ss] * m[:θ] * m[:f_H1] - m[:c_H2_ss] * m[:θ] * (1-m[:f_H1])) / (1 - m[:θ]) # from Giorgio's MATLAB script for solving steady state
+    m[:λ_H1_ss] = exp(m[:γ]) / (exp(m[:γ]) - m[:h]) / m[:c_H1_ss] # from Giorgio's MATLAB script for solving steady state
+    m[:λ_H2_ss] = exp(m[:γ]) / (exp(m[:γ]) - m[:h]) / m[:c_H2_ss] # from Giorgio's MATLAB script for solving steady state
+    m[:λ_S_ss]  = exp(m[:γ]) / (exp(m[:γ]) - m[:h]) / m[:c_S_ss] # from Giorgio's MATLAB script for solving steady state
     m[:R_ss]    = 1.025 / 4.
     m[:bᴿ_ss]   = (m[:g_ss] - m[:t_ss] + m[:τ_ss]) / (1 - m[:R_ss] / exp(m[:γ]) / m[:π_ss]) # from Giorgio's MATLAB script for solving steady state
 
     # PROBLEM STEADY STATES
     m[:mc1_ss]  = m[:ρ_ss] ^ m[:α] * m[:w1_ss] ^ (1 - m[:α]) / (m[:α] ^ m[:α] * (1 - m[:α]) ^ (1 - m[:α]))
     m[:mc2_ss]  = m[:ρ_ss] ^ m[:α] * (m[:w2_ss] / m[:A2]) ^ (1 - m[:α]) / (m[:α] ^ m[:α] * (1 - m[:α]) ^ (1 - m[:α]))
-    m[:π_S_ss]  = (m[:y_ss] - m[:mc1_ss] * m[:L1_ss] * m[:klR1_ss] ^ m[:α] - m[:mc2_ss] * m[:L2_ss] * m[:klR2_ss] ^ m[:α] * m[:A2] ^
+    m[:π_S_ss]  = (m[:y_ss] - m[:mc1_ss] * m[:L1] * m[:klR1_ss] ^ m[:α] - m[:mc2_ss] * m[:L2] * m[:klR2_ss] ^ m[:α] * m[:A2] ^
                       (1 - m[:α])) / (1 - m[:θ])
 
     # function to compute residuals for solving system of nonlinear equations
@@ -630,7 +630,7 @@ function steadystate!(m::COTHANK)
 
     m[:λ_SH1_ss] = (1 - m[:θ]) * m[:f_S1] / ((1 - m[:θ]) * m[:f_S1] + m[:θ] * m[:f_H1]) * m[:λ_S_ss] + m[:θ] *
                        m[:f_H1] / ((1 - m[:θ]) * m[:f_S1] + m[:θ] * m[:f_H1]) * m[:λ_H1_ss]
-    m[:λ_SH2_ss] = (1 - m[:θ]) * (1 - m[:f_S1]) / ((1 - m[:θ]) * (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1]) * m[:λ_S_ss] +
+    m[:λ_SH2_ss] = (1 - m[:θ]) * (1 - m[:f_S1]) / ((1 - m[:θ]) * (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) * m[:λ_S_ss] +
                        m[:θ] * (1 - m[:f_H1]) / ((1 - m[:θ]) * (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) * m[:λ_H2_ss]
     return m
 end

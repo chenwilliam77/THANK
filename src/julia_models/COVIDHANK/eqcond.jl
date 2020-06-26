@@ -186,7 +186,7 @@ function eqcond(m::COTHANK)
     # Sticky
     Γ0[eq[:eq_euler], endo[:λ_S_t]]   = -1. # Euler equation also pins down the bonds demand/self-insurance motive
     Γ0[eq[:eq_euler], endo[:R_t]]     = 1.
-    Γ0[eq[:eq_euler], endo[:z_t]]    = -m[:ρ_z].
+    Γ0[eq[:eq_euler], endo[:z_t]]    = -m[:ρ_z]
     Γ0[eq[:eq_euler], endo[:Eπ_t]]    = -1.
     Γ0[eq[:eq_euler], endo[:Eλ_S_t]]  = m[:β] * m[:R_ss] / (expγ * m[:π_ss]) * m[:s]
     Γ0[eq[:eq_euler], endo[:Eλ_H1_t]] =  m[:β] * m[:R_ss] / (expγ * m[:π_ss]) *
@@ -299,7 +299,7 @@ function eqcond(m::COTHANK)
 
     Γ0[eq[:eq_ϕ], endo[:ϕ_t]]    = -1.
     Γ0[eq[:eq_ϕ], endo[:Eϕ_t]]   = (1. - m[:δ]) * m[:β] * exp(-m[:γ])
-    Γ0[eq[:eq_ϕ], endo[:z_t]]   = -m[:ρ_z].
+    Γ0[eq[:eq_ϕ], endo[:z_t]]   = -m[:ρ_z]
     Γ0[eq[:eq_ϕ], endo[:Eλ_S_t]] = (1. - (1. - m[:δ]) * m[:β] * exp(-m[:γ]))
     Γ0[eq[:eq_ϕ], endo[:Eρ_t]]   = (1. - (1. - m[:δ]) * m[:β] * exp(-m[:γ]))
 
@@ -412,7 +412,7 @@ function eqcond(m::COTHANK)
 =#
     Γ0[eq[:eq_realdebt], endo[:bᴿ_t]] = m[:x_ss] * (m[:g_ss] - m[:t_ss] + m[:τ_ss])
     Γ0[eq[:eq_realdebt], endo[:π_t]]  = m[:R_ss] / (expγ * m[:π_ss]) * m[:bᴿ_ss] * (m[:g_ss] - m[:t_ss] + m[:τ_ss])
-    Γ0[eq[:eq_realdebt], endo[:z_t]]  = m[:R_ss] / (expγ * m[:π_ss]) 8 m[:bᴿ_ss] * (m[:g_ss] - m[:t_ss] + m[:τ_ss])
+    Γ0[eq[:eq_realdebt], endo[:z_t]]  = m[:R_ss] / (expγ * m[:π_ss]) * m[:bᴿ_ss] * (m[:g_ss] - m[:t_ss] + m[:τ_ss])
     Γ0[eq[:eq_realdebt], endo[:g_t]]  = -(1. - m[:R_ss] / (expγ * m[:π_ss])) * m[:x_ss] * m[:bᴿ_ss]
     Γ0[eq[:eq_realdebt], endo[:t_t]]  = (1. - m[:R_ss] / (expγ * m[:π_ss])) * m[:x_ss]  * m[:bᴿ_ss]
     Γ0[eq[:eq_realdebt], endo[:τ_t]]  = -(1. - m[:R_ss] / (expγ * m[:π_ss])) * m[:x_ss] * m[:bᴿ_ss]
@@ -552,10 +552,6 @@ function eqcond(m::COTHANK)
     Γ0[eq[:eq_Eπ2], endo[:π2_t]]  = 1.
     Γ1[eq[:eq_Eπ2], endo[:Eπ2_t]] = 1.
     Π[eq[:eq_Eπ2],  ex[:Eπ2_sh]]  = 1.
-
-    # z
-    Γ0[eq[:eq_Ez], endo[:z_t]]  = -m[:ρ_z]
-    Γ0[eq[:eq_Ez], endo[:Ez_t]] = 1.
 
     # λ_S
     Γ0[eq[:eq_Eλ_S], endo[:λ_S_t]]  = 1.
