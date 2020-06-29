@@ -134,7 +134,7 @@ function init_model_indices!(m::COTHANK)
 =#
     # Exogenous shocks
     exogenous_shocks = [:a_sh, :d_sh, :λ_p_sh, :b_sh, :z_sh, :τ_H1_sh, :τ_H2_sh, :μ_sh, :λ_w_sh,
-                        :τ_S_sh, :η_mp_sh, :g_sh]
+                        :τ_S_sh, :g_sh, :η_mp_sh]
 
     # Expectations shocks
     expected_shocks = [:Eπ1_sh, :Eπ2_sh, :Eλ_S_sh, :Eλ_H1_sh, :Eλ_H2_sh,
@@ -142,16 +142,16 @@ function init_model_indices!(m::COTHANK)
 
     # Equilibrium conditions
     equilibrium_conditions = [:eq_KL_ratio_good1, :eq_mc_good1, :eq_KL_ratio_good2, :eq_mc_good2, :eq_production_good1, :eq_production_good2,
-                              :eq_production_finalgood, :eq_demand_good1, :eq_price_index, :eq_price_phillips_good1,
+                              :eq_production_finalgood, :eq_price_index, :eq_demand_good1, :eq_price_phillips_good1,
                               :eq_price_phillips_good2, :eq_marg_utility_S, :eq_marg_utility_H1, :eq_marg_utility_H2, :eq_average_c,
                               :eq_euler, :eq_c_H1, :eq_c_H2, :eq_cap_util, :eq_ϕ, :eq_i, :eq_cap_input, :eq_cap_accum, :eq_wage_phillips_good1,
                               :eq_marg_sub_good1, :eq_avg_marg_util_SH1, :eq_wage_phillips_good2, :eq_marg_sub_good2, :eq_avg_marg_util_SH2,
                               :eq_mp, :eq_revenue, :eq_transfer, :eq_realdebt, :eq_fiscal_rule, :eq_redistribute_H1, :eq_redistribute_H2,
                               :eq_real_profits,
                               :eq_cap_market_clear, :eq_goods_market_clear, :eq_gdp,
-                              :eq_z, :eq_a, :eq_d, :eq_μ, :eq_b, :eq_λ_p, :eq_λ_w, :eq_η_mp, :eq_g, :eq_τ_S, :eq_τ_H1, :eq_τ_H2, #eq_φ
-                              :eq_Eπ, :eq_Eπ1, :eq_Eπ2, :eq_Eλ_S, :eq_Eλ_H1, :eq_Eλ_H2, :eq_Ex, :eq_Eϕ,
-                              :eq_Eρ, :eq_Ei_S, :eq_Ew1, :eq_Ew2]
+                              :eq_a, :eq_d, :eq_λ_p, :eq_b, :eq_z, :eq_τ_H1, :eq_τ_H2, :eq_μ, :eq_λ_w, :eq_τ_S, :eq_g, :eq_η_mp, #eq_φ
+                               :eq_Eπ1, :eq_Eπ2, :eq_Eλ_S, :eq_Eλ_H1, :eq_Eλ_H2, :eq_Ex, :eq_Eϕ,
+                              :eq_Eρ, :eq_Ei_S, :eq_Ew1, :eq_Eπ, :eq_Ew2]
 #=
                               :eq_y_f, :eq_k_f, :eq_L_f, :eq_Rk_f, :eq_w_f, :eq_mc_f,       # flexible prices
                               :eq_λ_f, :eq_c_f, :eq_R_f, :eq_u_f, :eq_ϕ_f,

@@ -73,7 +73,7 @@ function eqcond(m::COTHANK)
 
     Γ0[eq[:eq_production_good2], endo[:y2_t]]   = -1
     Γ0[eq[:eq_production_good2], endo[:klR2_t]] = (1. + m[:λ_p_ss]) * m[:α]
-    Γ0[eq[:eq_production_good2], endo[:L2_t]]   = (.1 + m[:λ_p_ss])
+    Γ0[eq[:eq_production_good2], endo[:L2_t]]   = (1. + m[:λ_p_ss])
     Γ0[eq[:eq_production_good2], endo[:a_t]]    = -m[:λ_p_ss]
 
 #=
@@ -87,15 +87,15 @@ function eqcond(m::COTHANK)
 
     # Sticky prices
     Γ0[eq[:eq_production_finalgood], endo[:y_t]] = -1.
-    Γ0[eq[:eq_production_finalgood], endo[:y1_t]] = m[:ν]
-    Γ0[eq[:eq_production_finalgood], endo[:y2_t]] = (1 - m[:ν])
-    Γ0[eq[:eq_production_finalgood], endo[:d_t]] = -(1 - m[:ν]) / (1 - m[:ζ])
+    Γ0[eq[:eq_production_finalgood], endo[:y1_t]] = m[:v]
+    Γ0[eq[:eq_production_finalgood], endo[:y2_t]] = (1 - m[:v])
+    Γ0[eq[:eq_production_finalgood], endo[:d_t]] = -(1 - m[:v]) / (1 - m[:ζ])
 
     Γ0[eq[:eq_price_index], endo[:π_t]] = -1.
-    Γ0[eq[:eq_price_index], endo[:d_t]] = (1. - m[:ν]) / (1. - m[:ζ])
-    Γ0[eq[:eq_price_index], endo[:π1_t]] = m[:ν]
-    Γ0[eq[:eq_price_index], endo[:π2_t]] = (1. - m[:ν])
-    Γ1[eq[:eq_price_index], endo[:d_t]] = (1. - m[:ν]) / (1. - m[:ζ])
+    Γ0[eq[:eq_price_index], endo[:d_t]] = (1. - m[:v]) / (1. - m[:ζ])
+    Γ0[eq[:eq_price_index], endo[:π1_t]] = m[:v]
+    Γ0[eq[:eq_price_index], endo[:π2_t]] = (1. - m[:v])
+    Γ1[eq[:eq_price_index], endo[:d_t]] = (1. - m[:v]) / (1. - m[:ζ])
 
     Γ0[eq[:eq_demand_good1], endo[:y1_t]] = 1
     Γ0[eq[:eq_demand_good1], endo[:y2_t]] = -1
@@ -267,8 +267,8 @@ function eqcond(m::COTHANK)
     Γ1[eq[:eq_c_H2], endo[:R_t]]    = -(1. - m[:f_S1]) * (1 - m[:s]) / (m[:θ] * (1. - m[:f_H1])) *
                                        m[:R_ss] / (expγ * m[:π_ss]) * m[:bᴿ_ss] / m[:c_H2_ss]
     Γ1[eq[:eq_c_H2], endo[:bᴿ_t]]    = -(1. - m[:f_S1]) * (1 - m[:s]) / (m[:θ] * (1. - m[:f_H1])) *
-                                        m[:R_ss] / (expγ * m[:π_ss]) * m[:bᴿ_ss] / m[:c_H2_ss] *
-                                        m[:x_ss] / m[:bᴿ_ss]
+                                        m[:R_ss] / (expγ * m[:π_ss] *  m[:c_H2_ss]) *
+                                        m[:x_ss]
 #=
     # Flexible
     Γ0[eq[:eq_c_H2_f], endo[:c_f_H2_t]] = -1
@@ -314,12 +314,12 @@ function eqcond(m::COTHANK)
     Γ0[eq[:eq_cap_input], endo[:k_t]]   = -1.
     Γ0[eq[:eq_cap_input], endo[:u_t]]   = 1.
     Γ0[eq[:eq_cap_input], endo[:z_t]]   = -1.
-    Γ1[eq[:eq_cap_input], endo[:k_S_t]] = 1.
+    Γ1[eq[:eq_cap_input], endo[:k_S_t]] = -1.
 
     Γ0[eq[:eq_cap_accum], endo[:k_S_t]] = 1.
     Γ0[eq[:eq_cap_accum], endo[:z_t]]   = (1. - m[:δ]) * exp(-m[:γ])
-    Γ0[eq[:eq_cap_accum], endo[:μ_t]]   = (1. - (1. - m[:δ]) * exp(-m[:γ]))
-    Γ0[eq[:eq_cap_accum], endo[:i_S_t]] = (1. - (1. - m[:δ]) * exp(-m[:γ]))
+    Γ0[eq[:eq_cap_accum], endo[:μ_t]]   = -(1. - (1. - m[:δ]) * exp(-m[:γ]))
+    Γ0[eq[:eq_cap_accum], endo[:i_S_t]] = -(1. - (1. - m[:δ]) * exp(-m[:γ]))
     Γ1[eq[:eq_cap_accum], endo[:k_S_t]] = (1. - m[:δ]) * exp(-m[:γ])
 #=
     # Flexible prices
@@ -384,7 +384,7 @@ function eqcond(m::COTHANK)
 
     ### 8. Monetary and fiscal policy
     Γ0[eq[:eq_mp], endo[:R_t]]    = -1.
-    Γ1[eq[:eq_mp], endo[:R_t]]    = m[:ρ_R]
+    Γ1[eq[:eq_mp], endo[:R_t]]    = -m[:ρ_R]
     Γ0[eq[:eq_mp], endo[:π_t]]    = (1. - m[:ρ_R]) * m[:ϕ_1]
     Γ0[eq[:eq_mp], endo[:x_t]]    = (1. - m[:ρ_R]) * m[:ϕ_3]
     Γ0[eq[:eq_mp], endo[:η_mp_t]] = 1.
