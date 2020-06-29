@@ -142,7 +142,7 @@ ssvec = [gam disc 1 pss pSss exp(gam) L1ss L2ss Rkss w1ss w2ss ...
 % -------------------------------------------------------------------------
 GAM0 = zeros(Nx, Nx);
 GAM1 = zeros(Nx, Nx);
-PSI  = zeros(Nx, Nshocks);
+PSI  = zeros(Nx, 12);
 PPI  = zeros(Nx, Nex);
 C    = zeros(Nx, 1);
 
@@ -456,7 +456,7 @@ GAM0(48,miu) = 1;       GAM1(48,miu) = rhomiu;          PSI(48,mius) = 1;
 GAM0(49,lambdaw) = 1;   GAM1(49,lambdaw) = rholambdaw;  PSI(49,lambdaws) = 1;
 GAM0(50,tauS) = 1;      GAM1(50,tauS) = rhotauS;        PSI(50,tauSs) = 1;
 GAM0(51,g) = 1;         GAM1(51,g) = rhog;              PSI(51,gs) = 1;
-GAM0(52,mp) = 1;        GAM1(52,mp) = rhomp;            PSI(52,mp) = 1;
+GAM0(52,mp) = 1;        GAM1(52,mp) = rhomp;            PSI(52,mps) = 1;
 
 % -------------------------------------------------------------------------
 GAM0(53,p1) = 1; GAM1(53,ep1) = 1; PPI(53,p1ex) = 1;
