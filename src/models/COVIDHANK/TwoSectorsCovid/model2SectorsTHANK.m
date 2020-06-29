@@ -477,3 +477,5 @@ save('eqcond.mat', 'ssvec','GAM0','GAM1', 'C', 'PSI', 'PPI');
 % Solution of the RE system of equations using Chris Sims' Gensys
 % -------------------------------------------------------------------------
 [G1, C, impact, fmat, fwt, ywt, gev, eu] = gensys(GAM0, GAM1, C, PSI, PPI);
+save('gensys_out.mat', 'G1', 'C', 'impact', 'eu');
+keyboard;
