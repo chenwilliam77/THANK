@@ -113,6 +113,7 @@ R0=(1+.025/4);
 options = optimoptions('fsolve','MaxFunctionEvaluations',8000,'MaxIterations',4000,'Display','final-detailed');
 fun=@(x) distSS(x);
 ss=fsolve(fun,[cH10 cH20 cS0 lambdaH10 lambdaH20 lambdaS0 bR0 R0],options)
+disp(ss)
 cH1ss=ss(1);
 cH2ss=ss(2);
 cSss=ss(3);

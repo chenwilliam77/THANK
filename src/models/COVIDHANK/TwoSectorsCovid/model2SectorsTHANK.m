@@ -9,7 +9,7 @@ function [G1, C, impact, eu, SDX, zmat, NY, NX] = model2SectorsTHANK(param)
 
 
 
-pS          = 39;   % profits (S-type HHs)
+
 % -------------------------------------------------------------------------
 % INDEX for endogenous variables
 % -------------------------------------------------------------------------
@@ -315,10 +315,10 @@ GAM0(18,w2) = w2ss*H2ss/cH2ss;
 GAM0(18,L2) = w2ss*H2ss/cH2ss;
 GAM0(18,tH2) = -xss/cH2ss;
 GAM0(18,tauH2) = xss/cH2ss;
-GAM0(18,z) = -(1-fS1)*(1-sss)*Rss*bRss/(theta*(1-fH1)*exp(gam)*pss*cH1ss);
-GAM0(18,p) = -(1-fS1)*(1-sss)*Rss*bRss/(theta*(1-fH1)*exp(gam)*pss*cH1ss);
-GAM0(18,x) = -(1-fS1)*sss*sx*Rss*bRss/(theta*(1-fH1)*exp(gam)*pss*cH1ss);
-GAM1(18,R) = -(1-fS1)*(1-sss)*Rss*bRss/(theta*(1-fH1)*exp(gam)*pss*cH1ss);
+GAM0(18,z) = -(1-fS1)*(1-sss)*Rss*bRss/(theta*(1-fH1)*exp(gam)*pss*cH2ss);
+GAM0(18,p) = -(1-fS1)*(1-sss)*Rss*bRss/(theta*(1-fH1)*exp(gam)*pss*cH2ss);
+GAM0(18,x) = -(1-fS1)*sss*sx*Rss*bRss/(theta*(1-fH1)*exp(gam)*pss*cH2ss);
+GAM1(18,R) = -(1-fS1)*(1-sss)*Rss*bRss/(theta*(1-fH1)*exp(gam)*pss*cH2ss);
 GAM1(18,bR) = -(1-fS1)*(1-sss)*Rss/(theta*(1-fH1)*exp(gam)*pss*cH2ss)*xss;
 
 % -------------------------------------------------------------------------
@@ -344,7 +344,7 @@ GAM1(21,iS) = -exp(2*gam)*S;
 % -------------------------------------------------------------------------
 GAM0(22,k) = -1;
 GAM0(22,u) = 1;
-GAM0(22,kbarS) = 1;
+GAM1(22,kbarS) = -1;
 GAM0(22,z) = -1;
 
 % -------------------------------------------------------------------------
@@ -400,12 +400,12 @@ GAM0(28,lambdaSH2) = -1;
 % -------------------------------------------------------------------------
 GAM0(29,lambdaSH2) = -1;
 GAM0(29,lambdaS) = (1-theta)*(1-fS1)*lambdaSss/[(1-theta)*(1-fS1)+theta*(1-fH1)]/lambdaSH2ss;
-GAM0(29,lambdaH2) = theta*(1-fS1)*lambdaH2ss/[(1-theta)*(1-fS1)+theta*(1-fH1)]/lambdaSH2ss;
+GAM0(29,lambdaH2) = theta*(1-fH1)*lambdaH2ss/[(1-theta)*(1-fS1)+theta*(1-fH1)]/lambdaSH2ss;
 
 % -------------------------------------------------------------------------
 GAM0(30,R) = -1;
 GAM0(30,p) = (1-rhoR)*fp;
-GAM0(30,x) = (1-rhoR)*(fx+fdx);
+GAM0(30,x) = (1-rhoR)*(fdx);
 GAM0(30,mp) = 1;
 GAM1(30,R) = -rhoR;
 GAM1(30,x) = (1-rhoR)*fdx;
@@ -490,7 +490,7 @@ GAM0(40,u) = -Rkss*kss/yss;
 GAM0(41,a) = 1;         GAM1(41,a) = rhoa;              PSI(41,as) = 1;
 GAM0(42,d) = 1;         GAM1(42,d) = rhod;              PSI(42,ds) = 1;
 GAM0(43,lambdap) = 1;   GAM1(43,lambdap) = rholambdap;  PSI(43,lambdaps) = 1;
-GAM0(44,b) = 1;         GAM1(44,d) = rhob;              PSI(44,bs) = 1;
+GAM0(44,b) = 1;         GAM1(44,b) = rhob;              PSI(44,bs) = 1;
 GAM0(45,z) = 1;         GAM1(45,z) = rhoz;              PSI(45,zs) = 1;
 GAM0(46,tauH1) = 1;     GAM1(46,tauH1) = rhotauH1;      PSI(46,tauH1s) = 1;
 GAM0(47,tauH2) = 1;     GAM1(47,tauH2) = rhotauH2;      PSI(47,tauH2s) = 1;
