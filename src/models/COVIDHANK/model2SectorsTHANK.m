@@ -6,8 +6,81 @@ function [G1, C, impact, eu, SDX, zmat, NY, NX] = model2SectorsTHANK(param)
 %
 % The solution takes the form:  x(t) = G1 * x(t-1) + impact * e(t)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+y           = 1;
+y1          = 2;
+y2          = 3;
+k           = 4;
+kbarS       = 5;
+L1          = 6;
+L2          = 7;
+klr1        = 8;
+klr2        = 9;
+w1          = 10;
+w2          = 11;
+p           = 12;
+p1          = 13;
+p2          = 14;
+mc1         = 15;
+mc2         = 16;
+lambdap     = 17;
+lambdaw     = 18;
+lambdaS     = 19;
+lambdaH1    = 20;
+lambdaH2    = 21;
+lambdaSH1   = 22;
+lambdaSH2   = 23;
+c           = 24;
+cH1         = 25;
+cH2         = 26;
+cS          = 27;
+iS          = 28;
+R           = 29;
+u           = 30;
+phi         = 31;
+z           = 32;
+Rk          = 33;
+a           = 34;
+d           = 35;
+x           = 36;
+b           = 37;
+t           = 38;
+g           = 39;
+gw1         = 40;
+gw2         = 41;
+miu         = 42;
 
-% -------------------------------------------------------------------------
+
+bR          = 43;
+mp          = 44;
+tS          = 45;
+tH1         = 46;
+tH2         = 47;
+tau         = 48;
+tauS        = 49;
+tauH1       = 50;
+tauH2       = 51;
+pS          = 52;
+price1      = 53;
+price2      = 54;
+
+% expectation variables
+ep1         = 55;
+ep2         = 56;
+elambdaS    = 57;
+elambdaH1   = 58;
+elambdaH2   = 59;
+ex          = 60;
+ephi        = 61;
+eRk         = 62;
+eiS         = 63;
+ew1         = 64;
+ep          = 65;
+ew2         = 66;
+
+Nx = 66;
+
+%{
+%-------------------------------------------------------------------------
 % INDEX for endogenous variables
 % -------------------------------------------------------------------------
 klr1        = 1;    % capital-labor ratio (sector 1)
@@ -85,6 +158,7 @@ mp          = lastvar + 12; % monetary policy shock
 
 Nx          = lastvar + 12; % total number of endogenous variables
 
+%}
 
 % -------------------------------------------------------------------------
 % INDEX for Shocks
@@ -130,9 +204,10 @@ Nex        = 12; % total number of expectational errors
 SteadyState;
 
 ssvec = [gam disc 1 pss pSss exp(gam) L1ss L2ss Rkss w1ss w2ss ...
-         klr1ss klr2ss kss F1 y1ss yss y2ss F2 xss iSss gss css ...
+         klr1ss klr2ss kss F1 y1ss yss y2ss xss iSss gss css ...
          tauss tauH1ss tauH2ss tauSss tss tH1ss tH2ss tSss cH1ss ...
-         cH2ss cSss lambdaH1ss lambdaH2ss lambdaSss lambdaSH1ss lambdaSH2ss bRss Rss mc1ss mc2ss price1ss price2ss];
+         cH2ss cSss lambdaH1ss lambdaH2ss lambdaSss lambdaSH1ss ...
+         lambdaSH2ss bRss Rss mc1ss mc2ss price1ss price2ss];
 % -------------------------------------------------------------------------
 % System Matrices
 % -------------------------------------------------------------------------
