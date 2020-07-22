@@ -19,7 +19,7 @@ end
 =#
 
 eqcondmats = matopen("eqcond.mat")
-gensysmats = matopen("gensys_out.mat")
+#gensysmats = matopen("gensys_out.mat")
 
 Γ0m = read(eqcondmats, "GAM0")
 Γ1m = read(eqcondmats, "GAM1")
@@ -27,5 +27,5 @@ Cm  = read(eqcondmats, "C")
 Ψm  = read(eqcondmats, "PSI")
 Πm  = read(eqcondmats, "PPI")
 ssmat = read(eqcondmats,"ssvec")
-TTTm = read(gensysmats, "G1")
-RRRm = read(gensysmats, "impact")
+#TTTm = read(gensysmats, "G1")
+#RRRm = read(gensysmats, "impact")
