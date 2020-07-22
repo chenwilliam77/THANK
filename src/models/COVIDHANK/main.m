@@ -1,5 +1,5 @@
 clear all;
-
+addpath ../../util/gensys
 lambdapss   = 0.15;                 % net markup
 alfa        = 1-.60/(1+lambdapss);  % to match CE/(GDP-PI)~0.6 (or 0.58?)
 v           = .7;
