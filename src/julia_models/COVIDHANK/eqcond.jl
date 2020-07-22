@@ -36,6 +36,7 @@ function eqcond(m::COTHANK)
     Γ0[eq[:eq_mc_good1], endo[:mc1_t]]    = -1.
     Γ0[eq[:eq_mc_good1], endo[:ρ_t]]      = m[:α]
     Γ0[eq[:eq_mc_good1], endo[:w1_t]]     = (1. - m[:α])
+    Γ0[eq[:eq_mc_good1], endo[:price1_t]] = -1.
 
     Γ0[eq[:eq_KL_ratio_good2], endo[:klR2_t]] = -1.
     Γ0[eq[:eq_KL_ratio_good2], endo[:w2_t]]   = 1.
@@ -45,6 +46,8 @@ function eqcond(m::COTHANK)
     Γ0[eq[:eq_mc_good2], endo[:ρ_t]]     = m[:α]
     Γ0[eq[:eq_mc_good2], endo[:w2_t]]    = (1. - m[:α])
     Γ0[eq[:eq_mc_good2], endo[:a_t]]     = -(1. - m[:α])
+    Γ0[eq[:eq_mc_good2], endo[:price2_t]]     = -1.
+
 #=
     # Flexible prices
     Γ0[eq[:eq_klR1_f], endo[:klR1_t_f]] = -1.
@@ -91,20 +94,30 @@ function eqcond(m::COTHANK)
     Γ0[eq[:eq_production_finalgood], endo[:y2_t]] = (1 - m[:v])
     Γ0[eq[:eq_production_finalgood], endo[:d_t]] = -(1 - m[:v]) / (1 - m[:ζ])
 
-    Γ0[eq[:eq_price_index], endo[:π_t]] = -1.
-    Γ0[eq[:eq_price_index], endo[:d_t]] = (1. - m[:v]) / (1. - m[:ζ])
+    Γ0[eq[:eq_price_index], endo[:π_t]]  = -1.
+    Γ0[eq[:eq_price_index], endo[:d_t]]  = (1. - m[:v]) / (1. - m[:ζ])
     Γ0[eq[:eq_price_index], endo[:π1_t]] = m[:v]
     Γ0[eq[:eq_price_index], endo[:π2_t]] = (1. - m[:v])
-    Γ1[eq[:eq_price_index], endo[:d_t]] = (1. - m[:v]) / (1. - m[:ζ])
+    Γ1[eq[:eq_price_index], endo[:d_t]]  = (1. - m[:v]) / (1. - m[:ζ])
 
     Γ0[eq[:eq_demand_good1], endo[:y1_t]] = 1
     Γ0[eq[:eq_demand_good1], endo[:y2_t]] = -1
     Γ0[eq[:eq_demand_good1], endo[:π1_t]] = m[:ζ]
     Γ0[eq[:eq_demand_good1], endo[:π2_t]] = -m[:ζ]
-    Γ0[eq[:eq_demand_good1], endo[:d_t]] = 1
+    Γ0[eq[:eq_demand_good1], endo[:d_t]]  = 1
     Γ1[eq[:eq_demand_good1], endo[:y1_t]] = 1
     Γ1[eq[:eq_demand_good1], endo[:y2_t]] = -1
-    Γ1[eq[:eq_demand_good1], endo[:d_t]] = 1
+    Γ1[eq[:eq_demand_good1], endo[:d_t]]  = 1
+
+    Γ0[eq[:eq_π1], endo[:y1_t]]     = 1.
+    Γ0[eq[:eq_π1], endo[:price1_t]] = m[:vars]
+    Γ0[eq[:eq_π1], endo[:y_t]] = -1.
+
+    Γ0[eq[:eq_π2], endo[:y2_t]]     = 1.
+    Γ0[eq[:eq_π2], endo[:d_t]]      = -1.
+    Γ0[eq[:eq_π2], endo[:price2_t]] = m[:vars]
+    Γ0[eq[:eq_π2], endo[:y_t]]      = -1.
+
 
     ### 4. Price Phillips Curve
 
@@ -410,21 +423,21 @@ function eqcond(m::COTHANK)
     Γ1[eq[:eq_realdebt], endo[:R_t]]  = m[:R_ss] / (expγ * m[:π_ss])
     Γ1[eq[:eq_realdebt], endo[:bᴿ_t]] = m[:R_ss] / (expγ * m[:π_ss]) * m[:x_ss] / m[:bᴿ_ss]
 =#
-    Γ0[eq[:eq_realdebt], endo[:bᴿ_t]] = m[:x_ss] * (m[:g_ss] - m[:t_ss] + m[:τ_ss])
-    Γ0[eq[:eq_realdebt], endo[:π_t]]  = m[:R_ss] / (expγ * m[:π_ss]) * m[:bᴿ_ss] * (m[:g_ss] - m[:t_ss] + m[:τ_ss])
-    Γ0[eq[:eq_realdebt], endo[:z_t]]  = m[:R_ss] / (expγ * m[:π_ss]) * m[:bᴿ_ss] * (m[:g_ss] - m[:t_ss] + m[:τ_ss])
-    Γ0[eq[:eq_realdebt], endo[:g_t]]  = -(1. - m[:R_ss] / (expγ * m[:π_ss])) * m[:x_ss] * m[:bᴿ_ss]
-    Γ0[eq[:eq_realdebt], endo[:t_t]]  = (1. - m[:R_ss] / (expγ * m[:π_ss])) * m[:x_ss]  * m[:bᴿ_ss]
-    Γ0[eq[:eq_realdebt], endo[:τ_t]]  = -(1. - m[:R_ss] / (expγ * m[:π_ss])) * m[:x_ss] * m[:bᴿ_ss]
-    Γ1[eq[:eq_realdebt], endo[:R_t]]  = m[:R_ss] / (expγ * m[:π_ss]) * m[:bᴿ_ss] * (m[:g_ss] - m[:t_ss] + m[:τ_ss])
-    Γ1[eq[:eq_realdebt], endo[:bᴿ_t]] = m[:R_ss] / (expγ * m[:π_ss]) * m[:x_ss] * (m[:g_ss] - m[:t_ss] + m[:τ_ss])
+    Γ0[eq[:eq_realdebt], endo[:bᴿ_t]] = 1.
+    Γ0[eq[:eq_realdebt], endo[:π_t]]  = m[:R_ss] / (expγ * m[:π_ss]) * m[:bᴿ_ss] / (m[:x_ss])
+    Γ0[eq[:eq_realdebt], endo[:z_t]]  = m[:R_ss] / (expγ * m[:π_ss]) * m[:bᴿ_ss] / (m[:x_ss])
+    Γ0[eq[:eq_realdebt], endo[:g_t]]  = -1.
+    Γ0[eq[:eq_realdebt], endo[:t_t]]  = 1.
+    Γ0[eq[:eq_realdebt], endo[:τ_t]]  = -1.
+    Γ1[eq[:eq_realdebt], endo[:R_t]]  = m[:R_ss] / (expγ * m[:π_ss]) * m[:bᴿ_ss] / (m[:x_ss])
+    Γ1[eq[:eq_realdebt], endo[:bᴿ_t]] = m[:R_ss] / (expγ * m[:π_ss])
 
     Γ0[eq[:eq_fiscal_rule], endo[:t_t]] = -m[:x_ss] / m[:t_ss]
     Γ0[eq[:eq_fiscal_rule], endo[:x_t]] = (1. + (1. - m[:ρ_T]) * m[:ζ_X] - (1. - m[:ρ_T]) * m[:ζ_G])
     Γ0[eq[:eq_fiscal_rule], endo[:g_t]] = (1. - m[:ρ_T]) * m[:ζ_G] * m[:x_ss] / m[:g_ss]
     Γ1[eq[:eq_fiscal_rule], endo[:t_t]] = -m[:ρ_T] * m[:x_ss] / m[:t_ss]
-    Γ1[eq[:eq_fiscal_rule], endo[:bᴿ_t]] = -(1. - m[:ρ_T]) * m[:ζ_B]  * m[:x_ss] / m[:bᴿ_ss]
-    Γ1[eq[:eq_fiscal_rule], endo[:x_t]] = m[:ρ_T] + (1. - m[:ρ_T]) * m[:ζ_B]
+    Γ1[eq[:eq_fiscal_rule], endo[:bᴿ_t]] = -(1. - m[:ρ_T]) * m[:ζ_B]
+    Γ1[eq[:eq_fiscal_rule], endo[:x_t]] = m[:ρ_T] + (1. - m[:ρ_T]) * m[:ζ_B]  * m[:bᴿ_ss] / m[:x_ss]
 
     Γ0[eq[:eq_redistribute_H1], endo[:t_H1_t]] = m[:θ] * m[:f_H1] # IN THE TEXT, THIS IS f_H, but I think it should be f_H1
     Γ0[eq[:eq_redistribute_H1], endo[:t_t]]    = -m[:ψ_H1]
@@ -434,17 +447,20 @@ function eqcond(m::COTHANK)
 
     ### 9. Market clearing and aggregate resource constraint
     # commenting out following eq condition b/c of presence of π_S_ss, unsure of parameter's meaning
-    Γ0[eq[:eq_real_profits], endo[:π_S_t]]  = -1.
-    Γ0[eq[:eq_real_profits], endo[:y_t]]    = m[:y_ss] / ((1. - m[:θ]) * m[:π_S_ss])
-    Γ0[eq[:eq_real_profits], endo[:mc1_t]]  = -m[:mc1_ss] * m[:klR1_ss] * m[:L1] / ((1. - m[:θ]) * m[:π_S_ss])
-    Γ0[eq[:eq_real_profits], endo[:klR1_t]] = -m[:mc1_ss] * m[:klR1_ss] * m[:L1] / ((1. - m[:θ]) * m[:π_S_ss])
-    Γ0[eq[:eq_real_profits], endo[:L1_t]]   = -m[:mc1_ss] * m[:klR1_ss] * m[:L1] / ((1. - m[:θ]) * m[:π_S_ss])
-    Γ0[eq[:eq_real_profits], endo[:mc2_t]]  = -m[:A2] ^ (1. - m[:α]) * m[:mc2_ss] * m[:klR2_ss] * m[:L2] /
-                                               ((1. - m[:θ]) * m[:π_S_ss])
-    Γ0[eq[:eq_real_profits], endo[:klR2_t]] = -m[:A2] ^ (1. - m[:α]) * m[:mc2_ss] * m[:klR2_ss] * m[:L2] /
-                                               ((1. - m[:θ]) * m[:π_S_ss])
-    Γ0[eq[:eq_real_profits], endo[:L2_t]]   = -m[:A2] ^ (1. - m[:α]) * m[:mc2_ss] * m[:klR2_ss] * m[:L2] /
-                                               ((1. - m[:θ]) * m[:π_S_ss])
+    Γ0[eq[:eq_real_profits], endo[:π_S_t]]     = -1.
+    Γ0[eq[:eq_real_profits], endo[:y_t]]       = m[:y_ss] / ((1. - m[:θ]) * m[:x_ss])
+    Γ0[eq[:eq_real_profits], endo[:price1_t]]  = -m[:price1_ss] * m[:mc1_ss] * m[:klR1_ss] * m[:L1] / ((1. - m[:θ]) * m[:x_ss])
+    Γ0[eq[:eq_real_profits], endo[:mc1_t]]     = -m[:price1_ss] * m[:mc1_ss] * m[:klR1_ss] * m[:L1] / ((1. - m[:θ]) * m[:x_ss])
+    Γ0[eq[:eq_real_profits], endo[:klR1_t]]    = -m[:price1_ss] * m[:mc1_ss] * m[:klR1_ss] * m[:L1] / ((1. - m[:θ]) * m[:π_S_ss])
+    Γ0[eq[:eq_real_profits], endo[:L1_t]]      = -m[:price1_ss] * m[:mc1_ss] * m[:klR1_ss] * m[:L1] / ((1. - m[:θ]) * m[:π_S_ss])
+    Γ0[eq[:eq_real_profits], endo[:price2_t]]  = -m[:price2_ss] * m[:A2] ^ (1. - m[:α]) * m[:mc2_ss] * m[:klR2_ss] * m[:L2] /
+                                               ((1. - m[:θ]) * m[:x_ss])
+    Γ0[eq[:eq_real_profits], endo[:mc2_t]]     = -m[:price2_ss] * m[:A2] ^ (1. - m[:α]) * m[:mc2_ss] * m[:klR2_ss] * m[:L2] /
+                                               ((1. - m[:θ]) * m[:x_ss])
+    Γ0[eq[:eq_real_profits], endo[:klR2_t]]    = -m[:price2_ss] * m[:A2] ^ (1. - m[:α]) * m[:mc2_ss] * m[:klR2_ss] * m[:L2] /
+                                               ((1. - m[:θ]) * m[:x_ss])
+    Γ0[eq[:eq_real_profits], endo[:L2_t]]      = -m[:price2_ss] * m[:A2] ^ (1. - m[:α]) * m[:mc2_ss] * m[:klR2_ss] * m[:L2] /
+                                               ((1. - m[:θ]) * m[:x_ss])
 
     Γ0[eq[:eq_cap_market_clear], endo[:klR1_t]] = m[:klR1_ss] * m[:L1] / m[:k_ss]
     Γ0[eq[:eq_cap_market_clear], endo[:L1_t]]   = m[:klR1_ss] * m[:L1] / m[:k_ss]

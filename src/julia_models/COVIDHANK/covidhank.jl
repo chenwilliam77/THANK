@@ -123,7 +123,7 @@ function init_model_indices!(m::COTHANK)
                          :λ_S_t, :λ_H1_t, :λ_H2_t, :λ_SH1_t, :λ_SH2_t, :c_t,  :c_H1_t, :c_H2_t, :c_S_t, :i_S_t,
                          :R_t, :u_t, :ϕ_t, :z_t, :ρ_t, :a_t, :d_t, :x_t, :b_t, :t_t, #:φ_t,
                          :g_t, :g_w1_t, :g_w2_t, :μ_t, :bᴿ_t, :η_mp_t, :t_S_t, :t_H1_t, :t_H2_t,
-                         :τ_t, :τ_S_t, :τ_H1_t, :τ_H2_t, :π_S_t, :Eπ1_t, :Eπ2_t, :Eλ_S_t,
+                         :τ_t, :τ_S_t, :τ_H1_t, :τ_H2_t, :π_S_t, :price1_t, :price2_t, :Eπ1_t, :Eπ2_t, :Eλ_S_t,
                          :Eλ_H1_t, :Eλ_H2_t, :Ex_t, :Eϕ_t, :Eρ_t, :Ei_S_t, :Ew1_t, :Eπ_t, :Ew2_t]
                                                                                 # CHECK BACK IF ANY CAN BE AUGMENTED VARIABLES
 #=                         :y_f_t, :k_f_t, :L_f_t, :Rk_f_t, :w_f_t, :mc_f_t,       # flexible prices
@@ -142,7 +142,7 @@ function init_model_indices!(m::COTHANK)
 
     # Equilibrium conditions
     equilibrium_conditions = [:eq_KL_ratio_good1, :eq_mc_good1, :eq_KL_ratio_good2, :eq_mc_good2, :eq_production_good1, :eq_production_good2,
-                              :eq_production_finalgood, :eq_price_index, :eq_demand_good1, :eq_price_phillips_good1,
+                              :eq_production_finalgood, :eq_price_index, :eq_demand_good1, :eq_π1, :eq_π2, :eq_price_phillips_good1,
                               :eq_price_phillips_good2, :eq_marg_utility_S, :eq_marg_utility_H1, :eq_marg_utility_H2, :eq_average_c,
                               :eq_euler, :eq_c_H1, :eq_c_H2, :eq_cap_util, :eq_ϕ, :eq_i, :eq_cap_input, :eq_cap_accum, :eq_wage_phillips_good1,
                               :eq_marg_sub_good1, :eq_avg_marg_util_SH1, :eq_wage_phillips_good2, :eq_marg_sub_good2, :eq_avg_marg_util_SH2,
@@ -329,6 +329,7 @@ function init_parameters!(m::COTHANK)
     m <= parameter(:s, 0.995, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from Giorgio's MATLAB script
     m <= parameter(:g_x, 0.18, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true) # from Giorgio's MATLAB script
     m <= parameter(:v, 0.7, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
+    m <= parameter(:vars, 1.5, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
     m <= parameter(:ψ_H1, 0.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
     m <= parameter(:ψ_H2, 0.0, (1e-8, 5.), (1e-8, 5.), ModelConstructors.Untransformed(), RootInverseGamma(0.5, 1), fixed = true)
 
@@ -489,7 +490,7 @@ function init_parameters!(m::COTHANK)
     m <= SteadyStateParameter(:y1_ss, NaN, tex_label = "y1_ss")
     m <= SteadyStateParameter(:y_ss, NaN, tex_label = "y_{ss}")
     m <= SteadyStateParameter(:y2_ss, NaN, tex_label = "y2_{ss}")
-    m <= SteadyStateParameter(:F2_ss, NaN, tex_label = "F2_{ss}")
+#    m <= SteadyStateParameter(:F2_ss, NaN, tex_label = "F2_{ss}")
     m <= SteadyStateParameter(:x_ss, NaN, tex_label = "x_{ss}")
     m <= SteadyStateParameter(:i_S_ss, NaN, tex_label = "i_s_{ss}")
     m <= SteadyStateParameter(:g_ss, NaN, tex_label = "g_{ss}")
@@ -516,6 +517,8 @@ function init_parameters!(m::COTHANK)
     m <= SteadyStateParameter(:R_ss, NaN, tex_label = "R0_{ss}")
     m <= SteadyStateParameter(:mc1_ss, NaN, tex_label = "mc1_{ss}")
     m <= SteadyStateParameter(:mc2_ss, NaN, tex_label = "mc2_{ss}")
+    m <= SteadyStateParameter(:price1_ss, NaN, tex_label = "price1_{ss}")
+    m <= SteadyStateParameter(:price2_ss, NaN, tex_label = "price2_{ss}")
 
 end
 
@@ -545,20 +548,24 @@ function steadystate!(m::COTHANK)
     m[:L1]   = ((1-m[:θ]) * m[:f_S1] + m[:θ] * m[:f_H1]) * m[:H1] # from Giorgio's MATLAB script for solving steady state
     m[:L2]   = ((1-m[:θ]) * (1 - m[:f_S1]) + m[:θ] * (1 - m[:f_H1])) *m[:H2] # from Giorgio's MATLAB script for solving steady state
 
+    price1ss_price2ss = (m[:v] * m[:L2] * m[:A2] / m[:L1] / (1 - m[:v])) ^ ((1 - m[:α]) / (m[:α] + m[:vars] - m[:α] * m[:vars]))
+    m[:price1_ss]     = ( m[:v] + (1 - m[:v]) * price1ss_price2ss ^ (m[:vars] - 1)) ^ (-1 / (1 - m[:vars]))
+    m[:price2_ss]     = m[:price1_ss] / price1ss_price2ss
+
     m[:ρ_ss]    = exp(m[:γ]) / m[:β] - (1 - m[:δ]) # from Giorgio's MATLAB script for solving steady state
 
-    m[:w1_ss]   = (m[:α] ^ m[:α] * (1 - m[:α]) ^ (1 - m[:α]) / (1 + m[:λ_p_ss]) / (m[:ρ_ss] ^ m[:α])) ^ (1 / (1 - m[:α])) # from Giorgio's MATLAB script for solving steady state
-    m[:w2_ss]   = m[:A2] * m[:w1_ss] # from Giorgio's MATLAB script for solving steady state
+    m[:w1_ss]   = (m[:price1_ss] * m[:α] ^ m[:α] * (1 - m[:α]) ^ (1 - m[:α]) / (1 + m[:λ_p_ss]) / (m[:ρ_ss] ^ m[:α])) ^ (1 / (1 - m[:α])) # from Giorgio's MATLAB script for solving steady state
+    m[:w2_ss]   = m[:A2] * m[:w1_ss] * price1ss_price2ss ^ (1 / (m[:α] - 1)) # from Giorgio's MATLAB script for solving steady state
 
     m[:klR1_ss] = m[:w1_ss] / m[:ρ_ss] * m[:α] / (1 - m[:α]) # from Giorgio's MATLAB script for solving steady state
-    m[:klR2_ss] = m[:A2] * m[:klR1_ss] # from Giorgio's MATLAB script for solving steady state
+    m[:klR2_ss] = m[:A2] * m[:klR1_ss] * price1ss_price2ss ^ (1 / (m[:α] - 1)) # from Giorgio's MATLAB script for solving steady state
     m[:k_ss]    = m[:klR1_ss] * m[:L1] + m[:klR2_ss] * m[:L2] # from Giorgio's MATLAB script for solving steady state
 
     m[:F1_ss]   = m[:λ_p_ss] / (1 + m[:λ_p_ss]) * m[:L1] * m[:klR1_ss] ^ m[:α] # from Giorgio's MATLAB script for solving steady state
     m[:y1_ss]   = m[:L1] * m[:klR1_ss] ^ m[:α] - m[:F1_ss] # from Giorgio's MATLAB script for solving steady state
-    m[:y_ss]    = m[:y1_ss] /m[:v] # from Giorgio's MATLAB script for solving steady state
-    m[:y2_ss]   = (1 - m[:v]) * m[:y_ss] # from Giorgio's MATLAB script for solving steady state
-    m[:F2_ss]   = m[:λ_p_ss] * m[:y2_ss] / m[:A2] # from Giorgio's MATLAB script for solving steady state
+    m[:y_ss]    = m[:y1_ss] / m[:v] * m[:price1_ss] ^ m[:vars] # from Giorgio's MATLAB script for solving steady state
+    m[:y2_ss]   = (1 - m[:v]) * m[:y_ss] * m[:price2_ss] ^ (-m[:vars]) # from Giorgio's MATLAB script for solving steady state
+#    m[:F2_ss]   = m[:λ_p_ss] * m[:y2_ss] / m[:A2] # unneeded for now
     m[:x_ss]    = m[:y_ss] # from Giorgio's MATLAB script for solving steady state
 
     m[:i_S_ss]   = (1 - (1 - m[:δ]) * exp(-m[:γ])) * exp(m[:γ]) * m[:k_ss] / (1 - m[:θ]) # from Giorgio's MATLAB script for solving steady state
@@ -566,15 +573,16 @@ function steadystate!(m::COTHANK)
     m[:c_ss]    = m[:y_ss] - m[:g_ss] - (1 - m[:θ]) * m[:i_S_ss] # from Giorgio's MATLAB script for solving steady state
 
     m[:τ_ss]    = m[:τ_x] * m[:x_ss] # from Giorgio's MATLAB script for solving steady state
-    m[:τ_H1_ss] = m[:τ_ss] * m[:ψ_H1] / m[:θ] / (1 - m[:f_H1]) # from Giorgio's MATLAB script for solving steady state
+    m[:τ_H1_ss] = m[:τ_ss] * m[:ψ_H1] / m[:θ] / m[:f_H1] # from Giorgio's MATLAB script for solving steady state
     m[:τ_H2_ss] = m[:τ_ss] *m[:ψ_H2] / m[:θ] / (1 - m[:f_H1]) # from Giorgio's MATLAB script for solving steady state
-    m[:τ_s_ss]  = m[:τ_ss] - m[:θ] * (m[:f_H1] * m[:τ_H1_ss] + (1 - m[:f_H1]) * m[:τ_H2_ss]) # from Giorgio's MATLAB script for solving steady state
+    m[:τ_s_ss]  = (m[:τ_ss] - m[:θ] * (m[:f_H1] * m[:τ_H1_ss] + (1 - m[:f_H1]) * m[:τ_H2_ss])) / (1 - m[:θ])
 
     m[:t_ss]    = m[:t_x] * m[:x_ss] # from Giorgio's MATLAB script for solving steady state
     m[:t_H1_ss] = m[:t_ss] * m[:ψ_H1] / m[:θ] / m[:f_H1] # from Giorgio's MATLAB script for solving steady state
     m[:t_H2_ss] = m[:t_ss] * m[:ψ_H2] / m[:θ] / (1 - m[:f_H1]) # from Giorgio's MATLAB script for solving steady state
     m[:t_S_ss]  = (m[:t_ss] - m[:θ] * ( m[:f_H1] * m[:t_H1_ss] + (1 - m[:f_H1]) * m[:t_H2_ss])) / (1 - m[:θ]) # from Giorgio's MATLAB script for solving steady state
 
+    # the values below will be used as initial values for solving the fixed point problem
     m[:c_H1_ss] = m[:w1_ss] * m[:H1] - m[:t_H1_ss] + m[:τ_H1_ss] # from Giorgio's MATLAB script for solving steady state
     m[:c_H2_ss] =  m[:w2_ss] * m[:H2] - m[:t_H2_ss] + m[:τ_H2_ss] # from Giorgio's MATLAB script for solving steady state
     m[:c_S_ss]  = (m[:c_ss] - m[:c_H1_ss] * m[:θ] * m[:f_H1] - m[:c_H2_ss] * m[:θ] * (1-m[:f_H1])) / (1 - m[:θ]) # from Giorgio's MATLAB script for solving steady state
@@ -585,9 +593,9 @@ function steadystate!(m::COTHANK)
     m[:bᴿ_ss]   = (m[:g_ss] - m[:t_ss] + m[:τ_ss]) / (1 - m[:R_ss] / exp(m[:γ]) / m[:π_ss]) # from Giorgio's MATLAB script for solving steady state
 
     # PROBLEM STEADY STATES
-    m[:mc1_ss]  = m[:ρ_ss] ^ m[:α] * m[:w1_ss] ^ (1 - m[:α]) / (m[:α] ^ m[:α] * (1 - m[:α]) ^ (1 - m[:α]))
-    m[:mc2_ss]  = m[:ρ_ss] ^ m[:α] * (m[:w2_ss] / m[:A2]) ^ (1 - m[:α]) / (m[:α] ^ m[:α] * (1 - m[:α]) ^ (1 - m[:α]))
-    m[:π_S_ss]  = (m[:y_ss] - m[:mc1_ss] * m[:L1] * m[:klR1_ss] ^ m[:α] - m[:mc2_ss] * m[:L2] * m[:klR2_ss] ^ m[:α] * m[:A2] ^
+    m[:mc1_ss]  = m[:ρ_ss] ^ m[:α] * m[:w1_ss] ^ (1 - m[:α]) / (m[:α] ^ m[:α] * (1 - m[:α]) ^ (1 - m[:α])) / m[:price1_ss]
+    m[:mc2_ss]  = m[:ρ_ss] ^ m[:α] * (m[:w2_ss] / m[:A2]) ^ (1 - m[:α]) / (m[:α] ^ m[:α] * (1 - m[:α]) ^ (1 - m[:α])) / m[:price2_ss]
+    m[:π_S_ss]  = (m[:y_ss] - m[:price1_ss] * m[:mc1_ss] * m[:L1] * m[:klR1_ss] ^ m[:α] - m[:price2_ss] * m[:mc2_ss] * m[:L2] * m[:klR2_ss] ^ m[:α] * m[:A2] ^
                       (1 - m[:α])) / (1 - m[:θ])
 
     # function to compute residuals for solving system of nonlinear equations
